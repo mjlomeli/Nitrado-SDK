@@ -2,32 +2,20 @@ import requests
 import json
 
 
-def _get_key():
-    from pathlib import Path
-    import os
-    key_file = Path(os.environ.get("KEY")) / Path("keys.json")
-    if key_file.exists():
-        with open(key_file, "r") as r:
-            data = json.load(r)
-            return data['api']['https://server.nitrado.net/']['accounts'][0]['key']
-
-
-def pretty_json(data: dict):
-    return json.dumps(data, indent=3, sort_keys=True)
-
-
 class Client:
-    def __init__(self, api_url, access_token):
-        assert type(api_url) == str
+    CLIENT = None
+
+    def __init__(self, api_url, key):
+        assert type(api_url) == str, "A string key must be provided in Client(api_url, key)"
         assert len(api_url) > 1, "Api URL's should include 'http://' or 'https://'"
-        self.__headers = {'Authorization': access_token} if access_token else None
+        self.__headers = {'Authorization': key} if key else None
         self.__api_url = api_url if api_url[-1] == '/' else f"{api_url}/"
 
     def __make_path(self, path=None):
         if isinstance(path, str):
             return "{}{}".format(self.__api_url, path)
         elif isinstance(path, list):
-            path_list = [str(dir) for dir in path]
+            path_list = [str(directory) for directory in path]
             return "{}{}".format(self.__api_url, '/'.join(path_list))
         else:
             return self.__api_url
@@ -66,9 +54,15 @@ class Client:
         return self.__ark_request_filter(response)
 
 
-def test():
+if __name__ == '__main__':
+    import os
+
+    def pretty_json(data: dict):
+        return json.dumps(data, indent=3, sort_keys=True)
+
     NITRAPI_LIVE_URL = "https://api.nitrado.net/"
-    api = Client(NITRAPI_LIVE_URL)
+    access_token = os.environ.get('NITRADO_KEY')
+    api = Client(NITRAPI_LIVE_URL, access_token)
     print('Get Nitrado Ping')
     print(pretty_json(api.get('ping')))
     print("\n")
@@ -80,7 +74,3 @@ def test():
     print('Get Nitrado Version')
     print(pretty_json(api.get('version')))
     print("\n")
-
-
-if __name__ == '__main__':
-    test()
