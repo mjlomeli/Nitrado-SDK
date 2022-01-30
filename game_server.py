@@ -134,14 +134,14 @@ class GameServer:
 
     def donation_settings(self):
         path = ['services', self.service_id, 'gameservers', 'boost']
-        return GameServer.CLIENT.get(path=path)
+        return GameServer.CLIENT.get(path=path)['data']
 
     def update_donation_settings(self, enable=True, message=None, welcome_message=None):
         path = ['services', self.service_id, 'gameservers', 'boost']
         params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
         return GameServer.CLIENT.put(path=path, params=params)
 
-    def list_players_on_server(self):
+    def players(self):
         try:
             path = ["services", self.service_id, "gameservers", "games", "players"]
             return GameServer.CLIENT.get(path=path)['data']['players']
@@ -331,9 +331,10 @@ class GameServer:
         path = ['services', self.service_id, 'gameservers', 'settings', 'sets', set_id]
         return GameServer.CLIENT.delete(path=path)
 
-    def list_settings_sets(self):
+    def settings_sets(self):
         path = ['services', self.service_id, 'gameservers', 'settings', 'sets']
-        return GameServer.CLIENT.get(path=path)
+        sets = GameServer.CLIENT.get(path=path)['data']['sets']
+        return [data['data'] for data in sets]
 
     def restore_settings_sets(self, set_id: int):
         path = ['services', self.service_id, 'gameservers', 'settings', 'sets', set_id, 'restore']
@@ -347,7 +348,7 @@ class GameServer:
         path = ['services', self.service_id, 'gameservers', 'settings']
         return GameServer.CLIENT.delete(path=path)
 
-    def update_settings(self, category: str, key: str, value: str):
+    def update_settings(self, category: str=None, key: str=None, value: str=None):
         path = ['services', self.service_id, 'gameservers', 'settings']
         params = {'category': category, 'key': key, 'value': value}
         return GameServer.CLIENT.post(path=path, params=params)
@@ -405,14 +406,8 @@ class GameServer:
 
 
 def test_commands():
-    import json
     print("#############   ListBackups    ################")
-    import os
-    access_token = os.environ.get('NITRADO_KEY')
-    client = Client("https://api.nitrado.net/", access_token)
-    gameserver = GameServer(client, 9409179)
-    zed = 696509819
-    # gameserver.command('cheat GiveCreativeModeToPlayer {}'.format(zed))
+    gameserver = GameServer.all()[0]
     gameserver.command("")
     print("\n")
 
@@ -422,7 +417,7 @@ def test_list_backups():
     def pretty_json(data: dict):
         return json.dumps(data, indent=3, sort_keys=True)
 
-    gameserver = GameServer(9409179)
+    gameserver = GameServer.all()[0]
     print("#############   ListBackups    ################")
     print(pretty_json(gameserver.list_backups()))
     print("\n")
@@ -435,9 +430,7 @@ if __name__ == "__main__":
     Client.CLIENT = client
     GameServer.CLIENT = client
 
-    zed = '696509819'
-    name = 'Zedd'
-    # test_commands()
+    # test_commands() # requires RCON but I've yet to test it.
     test_list_backups()
 
 
