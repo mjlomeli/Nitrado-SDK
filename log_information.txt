@@ -11,12 +11,15 @@ This worked:
 
 import requests
 from requests.structures import CaseInsensitiveDict
+import os
 params = {"island": [9629787, "ni6414300_1"], "crystal": [9409179, "ni1299121_3741"], "ragnarok": [9629790, "ni1299121_6205"]}
+
 
 for server_id, file_id in params.values():
     url = f"https://api.nitrado.net/services/{server_id}/gameservers/file_server/download?file=%2Fgames%2F{file_id}%2Fnoftp%2Farkxb%2FShooterGame%2FSaved%2FLogs%2FShooterGame.log"
     headers = CaseInsensitiveDict()
-    headers["Authorization"] = "6jCWyWJJm9eh9wxXOGS5D7_R44ZjUPsKpCoZHVC7ZfvIjGi7w8Csc9Kd9UyzOvsJ0YTGGMtEN2oTyiVI3MMJFP7dCkRkc62brx4n"
+    key = os.environ.get('NITRADO_KEY')
+    headers["Authorization"] = key
     resp = requests.get(url, headers=headers)
     print("It works!" if resp.status_code == 200 else "Something went wrong")
 

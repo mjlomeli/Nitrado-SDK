@@ -1,5 +1,5 @@
 from client import Client
-
+import requests
 
 class GameServer:
     CLIENT = Client.CLIENT
@@ -64,6 +64,39 @@ class GameServer:
         path = ['services', self.service_id, 'gameservers', 'games', 'arkse', 'gen_cluster_id']
         return GameServer.CLIENT.get(path=path)['data']['clusterid']
 
+    def logs_shooter_game(self):
+        try:
+            path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+            params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log"}
+            url = GameServer.CLIENT.get(path=path, params=params)['data']['token']['url']
+            req = requests.get(url)
+            return req.text
+        except Exception as e:
+            print('[error] logs_shooter_game:', e)
+            return None
+
+    def logs_restart(self):
+        try:
+            path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+            params = {'file': f"/games/{self.username}/ftproot/restart.log"}
+            url = GameServer.CLIENT.get(path=path, params=params)['data']['token']['url']
+            req = requests.get(url)
+            return req.text
+        except Exception as e:
+            print('[error] logs_restart:', e)
+            return None
+
+    def logs_shooter_game_last(self):
+        try:
+            path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+            params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
+            url = GameServer.CLIENT.get(path=path, params=params)['data']['token']['url']
+            req = requests.get(url)
+            return req.text
+        except Exception as e:
+            print('[error] logs_shooter_game_last:', e)
+            return None
+
     def start(self, game):
         path = ['services', self.service_id, 'gameservers', 'games', 'start']
         params = {'game': game}
@@ -93,8 +126,6 @@ class GameServer:
     #     target_path = '/'.join(file_path.split("/")[:-1])
     #     params = {'source_path': file_path, 'target_path': target_path, 'target_filename': new_name}
     #     return self._client.post(path=path, params=params)
-
-
 
     def donation_history(self, page=0):
         path = ['services', self.service_id, 'gameservers', 'boost', 'history']
@@ -135,14 +166,20 @@ class GameServer:
         return GameServer.CLIENT.get(path=path)
 
     def restart(self, restart_message: str = None, log_message: str = None):
-        path = ['services', self.service_id, 'gameservers', 'restart']
-        params = {"restart_message": restart_message, "message": log_message}
-        return GameServer.CLIENT.post(path=path, params=params)
+        try:
+            path = ['services', self.service_id, 'gameservers', 'restart']
+            params = {"restart_message": restart_message, "message": log_message}
+            return GameServer.CLIENT.post(path=path, params=params)['status'] == 'success'
+        except Exception as e:
+            return False
 
     def stop(self, message=None, stop_message=None):
-        path = ['services', self.service_id, 'gameservers', 'stop']
-        params = {'message': message, 'stop_message': stop_message}
-        return GameServer.CLIENT.post(path=path, params=params)
+        try:
+            path = ['services', self.service_id, 'gameservers', 'stop']
+            params = {'message': message, 'stop_message': stop_message}
+            return GameServer.CLIENT.post(path=path, params=params)['status'] == 'success'
+        except Exception as e:
+            return False
 
     def list_backups(self):
         path = ['services', self.service_id, 'gameservers', 'backups']
@@ -324,10 +361,8 @@ class GameServer:
         params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
         return GameServer.CLIENT.put(path=path, params=params)
 
-
     def __repr__(self):
         return f"<GameServer(service_id={self.service_id}, status='{self.status}', query={self.query})>"
-
 
     def __str__(self):
         return f"""
