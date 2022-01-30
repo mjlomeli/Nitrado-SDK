@@ -142,8 +142,11 @@ class GameServer:
         return GameServer.CLIENT.put(path=path, params=params)
 
     def list_players_on_server(self):
-        path = ["services", self.service_id, "gameservers", "games", "players"]
-        return GameServer.CLIENT.get(path=path)
+        try:
+            path = ["services", self.service_id, "gameservers", "games", "players"]
+            return GameServer.CLIENT.get(path=path)['data']['players']
+        except Exception as e:
+            print("[error] list_players_on_server():", e)
 
     def white_list_player(self, gamertag):
         """
@@ -162,8 +165,11 @@ class GameServer:
         return GameServer.CLIENT.post(path=path, params=params)
 
     def details(self):
-        path = ['services', self.service_id, 'gameservers']
-        return GameServer.CLIENT.get(path=path)
+        try:
+            path = ['services', self.service_id, 'gameservers']
+            return GameServer.CLIENT.get(path=path)['data']['gameserver']
+        except Exception as e:
+            print("[error] details():", e)
 
     def restart(self, restart_message: str = None, log_message: str = None):
         try:
@@ -190,15 +196,14 @@ class GameServer:
         params = {'command': command}
         return GameServer.CLIENT.post(path=path, params=params)
 
-    def ping(self):
+    def ping(self, command):
         path = ['services', self.service_id, 'gameservers', 'app_server']
-        return GameServer.CLIENT.get(path=path)
+        return GameServer.CLIENT.get(path=path, params={'command': command})
 
     def restore_database(self, database: str, timestamp: str):
         path = ['services', self.service_id, 'gameservers', 'backups', 'database']
         params = {'database': database, 'timestamp': timestamp}
         return GameServer.CLIENT.post(path=path, params=params)
-
 
     def ftp_change_password(self, password: str):
         path = ['services', self.service_id, 'gameservers', 'ftp', 'password']

@@ -4,6 +4,27 @@ from game_server import GameServer
 class Service:
     CLIENT = Client.CLIENT
 
+    @staticmethod
+    def find_service(service_id):
+        try:
+            path = ['services', service_id]
+            data = Service.CLIENT.get(path=path)['data']['services']
+            return Service(data)
+        except Exception as e:
+            return None
+
+    @staticmethod
+    def all():
+        services = []
+        try:
+            servs = Service.CLIENT.get(path='services')['data']['services']
+            for data in servs:
+                services.append(Service(data))
+        except Exception as e:
+            print("[error] Service.all():", e)
+        return services
+
+
     def __init__(self, data):
         assert type(data) == dict, f"constructor only accepts type dict: Service({data})"
         self.__data = data
@@ -26,27 +47,9 @@ class Service:
         self.delete_date = data['delete_date'] if 'delete_date' in data else None
         self.suspending_in = data['suspending_in'] if 'suspending_in' in data else None
         self.deleting_in = data['deleting_in'] if 'deleting_in' in data else None
-        self.game_server = GameServer(self.id) if self.id else None
 
-    @staticmethod
-    def find_service(service_id):
-        try:
-            path = ['services', service_id]
-            data = Service.CLIENT.get(path=path)['data']['services']
-            return Service(data)
-        except Exception as e:
-            return None
-
-    @staticmethod
-    def all():
-        services = []
-        try:
-            servs = Service.CLIENT.get(path='services')['data']['services']
-            for data in servs:
-                services.append(Service(data))
-        except Exception as e:
-            print(e)
-            return services
+    def game_server(self):
+        return GameServer.find_game_server(self.id) if self.id else None
 
     def logs(self, page=None):
         if page:
@@ -175,7 +178,7 @@ if __name__ == "__main__":
     Client.CLIENT = client
     Service.CLIENT = client
 
-    test_service_list()
     test_service_details()
+    test_service_list()
     test_service_logs()
     test_service_tasks()
