@@ -1,4 +1,3 @@
-import client
 from client import Client
 from game_server import GameServer
 from service import Service
