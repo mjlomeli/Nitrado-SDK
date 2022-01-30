@@ -27,7 +27,6 @@ class Service:
 
     def __init__(self, data):
         assert type(data) == dict, f"constructor only accepts type dict: Service({data})"
-        self.__data = data
         self.id = data['id'] if 'id' in data else None
         self.location_id = data['location_id'] if 'location_id' in data else None
         self.status = data['status'] if 'status' in data else None
@@ -69,12 +68,12 @@ class Service:
         notify = Service.CLIENT.get(path=['services', self.id, 'notifications'])
         return notify['data']['notifications']
 
-    def list_tasks(self):
+    def tasks(self):
         path = ['services', self.id, 'tasks']
         tasks = Service.CLIENT.get(path=path)
         return tasks['data']['tasks']
 
-    def create_task(self, action_method, month, day, hour, minute, weekday, action_data=None):
+    def create_task(self, action_method=None, month="*", day="*", hour="24", minute="0", weekday="*", action_data=None):
         path = ['services', self.id, 'tasks']
         params = {'action_method': action_method, 'action_data': action_data, 'minute': minute,
                   'hour': hour, 'day': day, 'month': month, 'weekday': weekday}
@@ -84,7 +83,7 @@ class Service:
         except Exception as e:
             return False
 
-    def update_task(self, task_id, action_method, month, day, hour, minute, weekday, action_data=None):
+    def update_task(self, task_id=None, action_method=None, month="*", day="*", hour="*", minute="*", weekday="*", action_data=None):
         path = ['services', self.id, 'tasks', task_id]
         params = {'action_method': action_method, 'action_data': action_data, 'minute': minute,
                   'hour': hour, 'day': day, 'month': month, 'weekday': weekday}
@@ -167,7 +166,7 @@ def test_service_tasks():
 
     service = Service.all()[0]
     print("#############   Tasks    ################")
-    print(pretty_json(service.list_tasks()))
+    print(pretty_json(service.tasks()))
     print("\n")
 
 
