@@ -21,32 +21,7 @@ and create an API key.
    > Data directly related to the game server. This includes the player list, game settings, etc.
 
 
-## Creating the API Key
-### Login
-Login and go into your account.
 
-<img src="./images/dropdown.png" alt="login" /><br />
-
-### Account
-From your account, head over to the options. Click on the
-**Developer Portal**.
-
-<img src="./images/account.png" alt="account" /><br />
-
-### Developer Portal
-In the **Developer Portal** you'll want to create a long-life token.
-
-<img src="./images/developer.png" alt="developer"/><br />
-
-
-### Long Life Token
-Add a description for your token and check the areas of access you'd
-want your token to be granted.
-
-<img src="./images/token.png" alt="token" /><br />
-
-
-# Introduction
 
 ### Connect to Client
 To begin using the API the Client must first be connected to your Nitrado account.
