@@ -32,24 +32,24 @@ class NitradoAPI:
     def banned_list(cls):
         url = "http://arkdedicated.com/xboxbanlist.txt"
         req = requests.get(url)
-        return req.text.split('\n')
+        return req.text.split('\r\n')
 
     def __init__(self, key=None, url=None):
         key = key or os.environ.get("NITRADO_KEY")
         url = url or NitradoAPI.NITRADO_API_URL
-        assert key and url, f"params in NitradoApi({key}, {url}) must be provided"
+        assert key and url or NitradoAPI.CLIENT, f"params in NitradoApi({key}, {url}) must be provided"
         NitradoAPI.initialize_client(url, key)
         self.services = Service.all()
-        self.games = GameServer.all()
+        self.game_servers = GameServer.all()
 
     def health_check(self):
-        return NitradoAPI.CLIENT.get('ping')
+        return NitradoAPI.CLIENT.get('ping')['message']
 
     def maintenance_status(self):
-        return NitradoAPI.CLIENT.get('maintenance')
+        return NitradoAPI.CLIENT.get('maintenance')['data']
 
-    def current_api_version(self):
-        return NitradoAPI.CLIENT.get('version')
+    def version(self):
+        return NitradoAPI.CLIENT.get('version')['message']
 
 
 if __name__ == '__main__':
@@ -61,11 +61,11 @@ if __name__ == '__main__':
     api = NitradoAPI()
     print_json(api.health_check())
     print_json(api.maintenance_status())
-    print_json(api.current_api_version())
+    print_json(api.version())
 
     for service in api.services:
         print(service)
 
-    for game in api.games:
+    for game in api.game_servers:
         print(game)
 
