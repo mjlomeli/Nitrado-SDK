@@ -1,4 +1,4 @@
-requests >= 2.22.0      # HTTP protocols
+requests >= 2.0.0      # HTTP protocols
 Pillow >= 9.0.0         # Image Processing tool
 pytesseract >= 0.3.8    # OCR Recognition Tool
 
