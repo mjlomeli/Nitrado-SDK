@@ -6,7 +6,7 @@ This API accesses the Nitrado API found at [Nitrado API](https://doc.nitrado.net
 
 # Overview
 
-To have access to the Nitrado you must have an account created at [Nitrado](https://server.nitrado.net/)
+To have access to this application you must have an account created at [Nitrado](https://server.nitrado.net/)
 and create an API key.
 
 # [Wiki - Full documentation](https://github.com/mjlomeli/NitradoAPI/wiki)
