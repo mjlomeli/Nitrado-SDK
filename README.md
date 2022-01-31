@@ -28,7 +28,7 @@ To begin using the API the Client must first be connected to your Nitrado accoun
 Once connected to the client, you should have access to any of the API calls.
 
 ```python
-from src.example_package.nitrado_api import NitradoAPI
+from nitrado import NitradoAPI
 
 NitradoAPI.initialize_client("https://api.nitrado.net/", "your-api-key.txt")
 api = NitradoAPI()
@@ -37,7 +37,7 @@ api = NitradoAPI()
 **or**
 
 ```python
-from src.example_package.nitrado_api import NitradoAPI
+from nitrado import NitradoAPI
 
 api = NitradoAPI("https://api.nitrado.net/", "your-api-key.txt")
 ```
@@ -46,7 +46,7 @@ api = NitradoAPI("https://api.nitrado.net/", "your-api-key.txt")
 This example highlights how to get the service.
 
 ```python
-from src.example_package.nitrado_api import NitradoAPI
+from nitrado import NitradoAPI
 
 api = NitradoAPI("https://api.nitrado.net/", "your-api-key.txt")
 
@@ -65,7 +65,7 @@ print(services)
 This example highlights how to get the gameserver.
 
 ```python
-from src.example_package.nitrado_api import NitradoAPI
+from nitrado import NitradoAPI
 
 api = NitradoAPI("https://api.nitrado.net/", "your-api-key.txt")
 

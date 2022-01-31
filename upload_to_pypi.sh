@@ -1,1 +1,1 @@
-sudo rm -r dist; sudo rm -r src/nitrado.egg-info; python3 -m build && printf '__token__' | python3 -m twine upload --repository testpypi dist/*
+sudo rm -r dist; sudo rm -r src/nitrado.egg-info; python3 -m build && printf '__token__' | python3 -m twine upload --repository pypi dist/*
