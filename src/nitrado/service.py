@@ -49,7 +49,7 @@ class Service:
         self.deleting_in = data['deleting_in'] if 'deleting_in' in data else None
 
     def game_server(self):
-        return GameServer.find_game_server(self.id) if self.id else None
+        return GameServer.find_by_id(self.id) if self.id else None
 
     def logs(self, page=None):
         if page:

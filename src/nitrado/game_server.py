@@ -22,7 +22,7 @@ class GameServer:
             servs = GameServer.CLIENT.get(path='services')
             service_ids = [serv['id'] for serv in servs['data']['services']]
             for id in service_ids:
-                games.append(GameServer.find_game_server(id))
+                games.append(GameServer.find_by_id(id))
             return games
         except Exception as e:
             print(e)
