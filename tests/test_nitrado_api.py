@@ -1,5 +1,5 @@
 import json
-from src.nitrado_api import NitradoAPI
+from src.example_package.nitrado_api import NitradoAPI
 
 
 def print_json(data: dict):

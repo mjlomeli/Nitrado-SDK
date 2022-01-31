@@ -1,6 +1,6 @@
 import json
-from src.client import Client
-from src.game_server import GameServer
+from src.example_package.client import Client
+from src import GameServer
 
 
 def pretty_json(data: dict):

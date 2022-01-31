@@ -1,7 +1,7 @@
 import json
 import os
-from src.service import Service
-from src.client import Client
+from src import Service
+from src.example_package.client import Client
 
 
 def pretty_json(data: dict):

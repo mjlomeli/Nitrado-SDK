@@ -1,8 +1,9 @@
-from client import Client
-from game_server import GameServer
-from service import Service
+from nitrado.client import Client
+from nitrado.game_server import GameServer
+from nitrado.service import Service
 import requests
 import os
+
 
 class NitradoAPI:
     NITRADO_API_URL = "https://api.nitrado.net/"

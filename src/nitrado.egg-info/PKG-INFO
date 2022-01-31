@@ -1,3 +1,20 @@
+Metadata-Version: 2.1
+Name: nitrado
+Version: 0.0.5
+Summary: This application accesses the Nitrado API.
+Home-page: https://github.com/mjlomeli/NitradoAPI
+Author: Mauricio
+Author-email: dev.mauricio.lomeli@gmail.com
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/mjlomeli/NitradoAPI/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # Python Nitrado API
 
 
@@ -79,6 +96,8 @@ print(gameserver)
     <GameServer(service_id=11111113, status='started', query={'server_name': '[API] My-Server-3', 'connect_ip': '111.111.111.113:9996', 'map': 'TheIsland', 'version': '943.10', 'player_current': 0, 'player_max': 70, 'players': []})>
 ]
 ```
+
+
 
 
 

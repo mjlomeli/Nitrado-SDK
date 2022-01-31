@@ -1,6 +1,7 @@
-from client import Client
+from nitrado.client import Client
 import requests
 from pathlib import Path, WindowsPath
+
 
 class GameServer:
     CLIENT = Client.CLIENT

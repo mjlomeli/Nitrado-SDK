@@ -1,5 +1,6 @@
-from src.client import Client
-from src.game_server import GameServer
+from nitrado.client import Client
+from nitrado.game_server import GameServer
+
 
 class Service:
     CLIENT = Client.CLIENT

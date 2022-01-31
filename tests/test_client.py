@@ -1,6 +1,6 @@
 import os
 import json
-from src.client import Client
+from src.example_package.client import Client
 
 
 def pretty_json(data: dict):
