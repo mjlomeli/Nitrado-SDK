@@ -9,12 +9,16 @@ class NitradoAPI:
     CLIENT = Client.CLIENT
 
     @classmethod
-    def initialize_client(cls, url, key):
-        client = Client(url, key)
-        Client.CLIENT = client
-        GameServer.CLIENT = client
-        Service.CLIENT = client
-        NitradoAPI.CLIENT = client
+    def initialize_client(cls, url=None, key=None):
+        if not Client.CLIENT or GameServer.CLIENT or Service.CLIENT or NitradoAPI.CLIENT:
+            key = key or os.environ.get("NITRADO_KEY")
+            url = url or NitradoAPI.NITRADO_API_URL
+            assert key and url or NitradoAPI.CLIENT, f"The url and api key must be provided: url=>{url}, key=>{key}"
+            client = Client(url, key)
+            Client.CLIENT = client
+            GameServer.CLIENT = client
+            Service.CLIENT = client
+            NitradoAPI.CLIENT = client
 
     @classmethod
     def unofficial_server_list(cls):
@@ -35,9 +39,6 @@ class NitradoAPI:
         return req.text.split('\r\n')
 
     def __init__(self, key=None, url=None):
-        key = key or os.environ.get("NITRADO_KEY")
-        url = url or NitradoAPI.NITRADO_API_URL
-        assert key and url or NitradoAPI.CLIENT, f"params in NitradoApi({key}, {url}) must be provided"
         NitradoAPI.initialize_client(url, key)
         self.services = Service.all()
         self.game_servers = GameServer.all()

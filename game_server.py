@@ -1,5 +1,6 @@
 from client import Client
 import requests
+from pathlib import Path, WindowsPath
 
 class GameServer:
     CLIENT = Client.CLIENT
@@ -70,10 +71,10 @@ class GameServer:
             params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log"}
             url = GameServer.CLIENT.get(path=path, params=params)['data']['token']['url']
             req = requests.get(url)
-            return req.text
+            return req.text.replace("\r\n", "\n")
         except Exception as e:
             print('[error] logs_shooter_game:', e)
-            return None
+            return ''
 
     def logs_restart(self):
         try:
@@ -81,10 +82,10 @@ class GameServer:
             params = {'file': f"/games/{self.username}/ftproot/restart.log"}
             url = GameServer.CLIENT.get(path=path, params=params)['data']['token']['url']
             req = requests.get(url)
-            return req.text
+            return req.text.replace("\r\n", "\n")
         except Exception as e:
             print('[error] logs_restart:', e)
-            return None
+            return ''
 
     def logs_shooter_game_last(self):
         try:
@@ -92,10 +93,22 @@ class GameServer:
             params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
             url = GameServer.CLIENT.get(path=path, params=params)['data']['token']['url']
             req = requests.get(url)
-            return req.text
+            return req.text.replace("\r\n", "\n")
         except Exception as e:
             print('[error] logs_shooter_game_last:', e)
-            return None
+            return ''
+
+    def logs_download(self, directory=Path.cwd()):
+        assert type(directory) == str or type(directory) == Path or type(directory) == WindowsPath, "Path provided must be of type string"
+        location = Path(directory)
+        if not location.is_dir():
+            raise FileNotFoundError(f"The directory provided does not exist: {directory}")
+        with open(location / Path('shooter_games.txt'), 'w') as w:
+            w.write(self.logs_shooter_game())
+        with open(location / Path('shooter_games_last.txt'), 'w') as w:
+            w.write(self.logs_shooter_game_last())
+        with open(location / Path('restart.txt'), 'w') as w:
+            w.write(self.logs_restart())
 
     def start(self, game):
         path = ['services', self.service_id, 'gameservers', 'games', 'start']
@@ -432,28 +445,5 @@ if __name__ == "__main__":
 
     # test_commands() # requires RCON but I've yet to test it.
     test_list_backups()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
