@@ -1,5 +1,5 @@
-from client import Client
-from game_server import GameServer
+from src.client import Client
+from src.game_server import GameServer
 
 class Service:
     CLIENT = Client.CLIENT
@@ -127,57 +127,3 @@ class Service:
         deleting_in = {self.deleting_in}
         """
 
-
-def test_service_list():
-    services = Service.all()
-    print("#############   Services    ################")
-    for service in services:
-        print(service)
-        print("\n")
-    print("\n")
-
-
-def test_service_details():
-    import json
-    def pretty_json(data: dict):
-        return json.dumps(data, indent=3, sort_keys=True)
-
-    service = Service.all()[0]
-    print("#############   DETAILS    ################")
-    print(pretty_json(service.details))
-    print("\n")
-
-
-def test_service_logs():
-    import json
-    def pretty_json(data: dict):
-        return json.dumps(data, indent=3, sort_keys=True)
-
-    service = Service.all()[0]
-    print("#############   LOGS    ################")
-    print(pretty_json(service.logs()))
-    print("\n")
-
-
-def test_service_tasks():
-    import json
-    def pretty_json(data: dict):
-        return json.dumps(data, indent=3, sort_keys=True)
-
-    service = Service.all()[0]
-    print("#############   Tasks    ################")
-    print(pretty_json(service.tasks()))
-    print("\n")
-
-
-if __name__ == "__main__":
-    import os
-    access_token = os.environ.get('NITRADO_KEY')
-    client = Client("https://api.nitrado.net/", access_token)
-    Client.CLIENT = client
-    Service.CLIENT = client
-
-    test_service_details()
-    test_service_list()
-    test_service_logs()
-    test_service_tasks()

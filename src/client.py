@@ -52,25 +52,3 @@ class Client:
     def put(self, path=None, data=None, params=None):
         response = requests.put(self.__make_path(path), headers=self.__headers, data=data, params=params)
         return self.__ark_request_filter(response)
-
-
-if __name__ == '__main__':
-    import os
-
-    def pretty_json(data: dict):
-        return json.dumps(data, indent=3, sort_keys=True)
-
-    NITRAPI_LIVE_URL = "https://api.nitrado.net/"
-    access_token = os.environ.get('NITRADO_KEY')
-    api = Client(NITRAPI_LIVE_URL, access_token)
-    print('Get Nitrado Ping')
-    print(pretty_json(api.get('ping')))
-    print("\n")
-
-    print('Get Nitrado Maintenance Status')
-    print(pretty_json(api.get('maintenance')))
-    print("\n")
-
-    print('Get Nitrado Version')
-    print(pretty_json(api.get('version')))
-    print("\n")
