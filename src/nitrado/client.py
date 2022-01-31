@@ -6,7 +6,7 @@ class Client:
     CLIENT = None
 
     def __init__(self, api_url, key):
-        assert type(api_url) == str, "A string key must be provided in Client(api_url, key)"
+        assert type(api_url) == str, "A string key.txt must be provided in Client(api_url, key.txt)"
         assert len(api_url) > 1, "Api URL's should include 'http://' or 'https://'"
         self.__headers = {'Authorization': key} if key else None
         self.__api_url = api_url if api_url[-1] == '/' else f"{api_url}/"

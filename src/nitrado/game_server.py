@@ -364,7 +364,7 @@ class GameServer:
 
     def update_settings(self, category: str=None, key: str=None, value: str=None):
         path = ['services', self.service_id, 'gameservers', 'settings']
-        params = {'category': category, 'key': key, 'value': value}
+        params = {'category': category, 'key.txt': key, 'value': value}
         return GameServer.CLIENT.post(path=path, params=params)
 
     def boost_history(self, page: int = 0):
