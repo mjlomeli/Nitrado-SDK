@@ -1,0 +1,1 @@
+yes | python3 -m pip uninstall nitrado && python3 -m pip install -i https://test.pypi.org/simple/ nitrado

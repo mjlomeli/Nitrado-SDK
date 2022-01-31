@@ -1,7 +1,7 @@
 # Python Nitrado API
 
 
-This API accesses the Nitrado API found at [Nitrado API](https://api.nitrado.net/)
+This API accesses the Nitrado API found at [Nitrado API](https://doc.nitrado.net/)
 
 
 # Overview
