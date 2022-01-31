@@ -7,7 +7,7 @@ class GameServer:
     CLIENT = Client.CLIENT
 
     @classmethod
-    def find_game_server(cls, service_id):
+    def find_by_id(cls, service_id):
         try:
             path = ['services', service_id, 'gameservers']
             data = GameServer.CLIENT.get(path=path)['data']['gameserver']

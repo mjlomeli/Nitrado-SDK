@@ -6,7 +6,7 @@ class Service:
     CLIENT = Client.CLIENT
 
     @staticmethod
-    def find_service(service_id):
+    def find_by_id(service_id):
         try:
             path = ['services', service_id]
             data = Service.CLIENT.get(path=path)['data']['services']
