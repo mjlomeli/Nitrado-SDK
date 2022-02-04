@@ -124,8 +124,8 @@ class GameServer:
     def download_file(self, file_path):
         path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
         # /games/ni*******_1/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log
-        # /games/ni1299121_3741/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log
-        # /games/ni1299121_3741/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log
+        # /games/ni129_3741/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log
+        # /games/ni129_3741/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log
         # curl -H 'Authorization: Bearer <token>' 'https://api.nitrado.net/services/7315782/gameservers/file_server/download?file=%2Fgames%2Fni1299121_3741%2Fnoftp%2Farkxb%2FShooterGame%2FSaved%2FLogs%2FShooterGame.log
         params = {'path': file_path}
         return GameServer.CLIENT.get(path=path, params=params)
