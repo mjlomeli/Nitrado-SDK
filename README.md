@@ -1,7 +1,7 @@
 # Python Nitrado API
 
 
-This API accesses the Nitrado API found at [Nitrado API](https://doc.nitrado.net/)
+A Python based SDK for the [Nitrado RESTful API](https://doc.nitrado.net/) published at [PyPI](https://doc.nitrado.net/).
 
 
 # Overview
