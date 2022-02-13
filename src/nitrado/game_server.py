@@ -3,30 +3,40 @@ import requests
 from pathlib import Path, WindowsPath
 
 
+def assert_success(response):
+    if not response:
+        return
+    if 'status' not in response or response['status'] != 'success':
+        raise AssertionError(f"API returned: {response}")
+
+
+def assert_request(req):
+    if not req.ok:
+        code = req.status_code
+        reason = req.reason
+        raise requests.RequestException(f"Url error => {code} {reason} for:", req.url)
+
+
 class GameServer:
     CLIENT = Client.CLIENT
 
     @classmethod
     def find_by_id(cls, service_id):
-        try:
-            path = ['services', service_id, 'gameservers']
-            data = GameServer.CLIENT.get(path=path)['data']['gameserver']
-            return GameServer(data)
-        except Exception as e:
-            return None
+        path = ['services', service_id, 'gameservers']
+        resp = GameServer.CLIENT.get(path=path)
+        assert_success(resp)
+        data = resp['data']['gameserver']
+        return GameServer(data)
 
     @classmethod
     def all(cls):
         games = []
-        try:
-            servs = GameServer.CLIENT.get(path='services')
-            service_ids = [serv['id'] for serv in servs['data']['services']]
-            for id in service_ids:
-                games.append(GameServer.find_by_id(id))
-            return games
-        except Exception as e:
-            print(e)
-            return games
+        resp = GameServer.CLIENT.get(path='services')
+        assert_success(resp)
+        service_ids = [serv['id'] for serv in resp['data']['services']]
+        for serv_id in service_ids:
+            games.append(GameServer.find_by_id(serv_id))
+        return games
 
     def __init__(self, data):
         """
@@ -64,40 +74,39 @@ class GameServer:
 
     def cluster_id(self):
         path = ['services', self.service_id, 'gameservers', 'games', 'arkse', 'gen_cluster_id']
-        return GameServer.CLIENT.get(path=path)['data']['clusterid']
+        resp = GameServer.CLIENT.get(path=path)
+        assert_success(resp)
+        return resp['data']['clusterid']
 
     def logs_shooter_game(self):
-        try:
-            path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
-            params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log"}
-            url = GameServer.CLIENT.get(path=path, params=params)['data']['token']['url']
-            req = requests.get(url)
-            return req.text.replace("\r\n", "\n")
-        except Exception as e:
-            print('[error] logs_shooter_game:', e)
-            return ''
+        path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+        params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log"}
+        resp_url = GameServer.CLIENT.get(path=path, params=params)
+        assert_success(resp_url)
+        url = resp_url['data']['token']['url']
+        req = requests.get(url)
+        assert_request(req)
+        return req.text.replace("\r\n", "\n")
 
     def logs_restart(self):
-        try:
-            path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
-            params = {'file': f"/games/{self.username}/ftproot/restart.log"}
-            url = GameServer.CLIENT.get(path=path, params=params)['data']['token']['url']
-            req = requests.get(url)
-            return req.text.replace("\r\n", "\n")
-        except Exception as e:
-            print('[error] logs_restart:', e)
-            return ''
+        path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+        params = {'file': f"/games/{self.username}/ftproot/restart.log"}
+        resp_url = GameServer.CLIENT.get(path=path, params=params)
+        assert_success(resp_url)
+        url = resp_url['data']['token']['url']
+        req = requests.get(url)
+        assert_request(req)
+        return req.text.replace("\r\n", "\n")
 
     def logs_shooter_game_last(self):
-        try:
-            path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
-            params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
-            url = GameServer.CLIENT.get(path=path, params=params)['data']['token']['url']
-            req = requests.get(url)
-            return req.text.replace("\r\n", "\n")
-        except Exception as e:
-            print('[error] logs_shooter_game_last:', e)
-            return ''
+        path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+        params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
+        resp_url = GameServer.CLIENT.get(path=path, params=params)
+        assert_success(resp_url)
+        url = resp_url['data']['token']['url']
+        req = requests.get(url)
+        assert_request(req)
+        return req.text.replace("\r\n", "\n")
 
     def logs_download(self, directory=Path.cwd()):
         assert type(directory) == str or type(directory) == Path or type(directory) == WindowsPath, "Path provided must be of type string"
@@ -156,17 +165,15 @@ class GameServer:
         return GameServer.CLIENT.put(path=path, params=params)
 
     def players(self):
-        try:
-            path = ["services", self.service_id, "gameservers", "games", "players"]
-            return GameServer.CLIENT.get(path=path)['data']['players']
-        except Exception as e:
-            print("[error] list_players_on_server():", e)
+        path = ["services", self.service_id, "gameservers", "games", "players"]
+        resp_players = GameServer.CLIENT.get(path=path)
+        assert_success(resp_players)
+        return resp_players['data']['players']
 
     def white_list_player(self, gamertag):
         """
         Player_Management - Add Player to Whitelist
-        :param server_id: The gameserver id
-        :param identifer: Player unique identifier.
+        :param gamertag: Player unique identifier.
         """
         params = {"identifer": gamertag}
         path = ["services", self.service_id, "gameservers", "games", "whitelist"]
@@ -179,19 +186,17 @@ class GameServer:
         return GameServer.CLIENT.post(path=path, params=params)
 
     def details(self):
-        try:
-            path = ['services', self.service_id, 'gameservers']
-            return GameServer.CLIENT.get(path=path)['data']['gameserver']
-        except Exception as e:
-            print("[error] details():", e)
+        path = ['services', self.service_id, 'gameservers']
+        resp_details = GameServer.CLIENT.get(path=path)
+        assert_success(resp_details)
+        return resp_details['data']['gameserver']
 
     def restart(self, restart_message: str = None, log_message: str = None):
-        try:
-            path = ['services', self.service_id, 'gameservers', 'restart']
-            params = {"restart_message": restart_message, "message": log_message}
-            return GameServer.CLIENT.post(path=path, params=params)['status'] == 'success'
-        except Exception as e:
-            return False
+        path = ['services', self.service_id, 'gameservers', 'restart']
+        params = {"restart_message": restart_message, "message": log_message}
+        resp_restart = GameServer.CLIENT.post(path=path, params=params)
+        assert_success(resp_restart)
+        return resp_restart['status'] == 'success'
 
     def stop(self, message=None, stop_message=None):
         try:

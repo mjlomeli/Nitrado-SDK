@@ -2,7 +2,15 @@ from nitrado.client import Client
 from nitrado.game_server import GameServer
 from nitrado.service import Service
 import requests
+from requests import RequestException
 import os
+
+
+def assert_success(response):
+    if not response:
+        return
+    if 'status' not in response or response['status'] != 'success':
+        raise AssertionError(f"API returned: {response}")
 
 
 class NitradoAPI:
@@ -11,10 +19,10 @@ class NitradoAPI:
 
     @classmethod
     def initialize_client(cls, key=None, url=None):
-        if not Client.CLIENT or GameServer.CLIENT or Service.CLIENT or NitradoAPI.CLIENT:
-            key = key or os.environ.get("NITRADO_KEY")
+        if not (Client.CLIENT or GameServer.CLIENT or Service.CLIENT or NitradoAPI.CLIENT):
+            key = key or os.environ["NITRADO_KEY"]
             url = url or NitradoAPI.NITRADO_API_URL
-            assert key and url or NitradoAPI.CLIENT, f"The url and api key must be provided: url=>{url}, key=>{key}"
+            assert key and url, f"The url and api key must be provided: url=>{url}, key=>{key}"
             client = Client(url, key)
             Client.CLIENT = client
             GameServer.CLIENT = client
@@ -23,20 +31,25 @@ class NitradoAPI:
 
     @classmethod
     def unofficial_server_list(cls):
-        url = "http://arkdedicated.com/xbox/cache/unofficialserverlist.json"
-        req = requests.get(url)
+        req = requests.get("http://arkdedicated.com/xbox/cache/unofficialserverlist.json")
+        if not req.ok:
+            code = req.status_code
+            reason = req.reason
+            raise RequestException(f"Url error => {code} {reason} for:", req.url)
         return req.json()
 
     @classmethod
     def official_server_list(cls):
-        url = "http://arkdedicated.com/xbox/cache/officialserverlist.json"
-        req = requests.get(url)
+        req = requests.get("http://arkdedicated.com/xbox/cache/officialserverlist.json")
+        if not req.ok:
+            code = req.status_code
+            reason = req.reason
+            raise RequestException(f"Url error => {code} {reason} for:", req.url)
         return req.json()
 
     @classmethod
     def banned_list(cls):
-        url = "http://arkdedicated.com/xboxbanlist.txt"
-        req = requests.get(url)
+        req = requests.get("http://arkdedicated.com/xboxbanlist.txt")
         return req.text.split('\r\n')
 
     def __init__(self, key=None, url=None):
@@ -45,13 +58,19 @@ class NitradoAPI:
         self.game_servers = GameServer.all()
 
     def health_check(self):
-        return NitradoAPI.CLIENT.get('ping')['message']
+        resp = NitradoAPI.CLIENT.get('ping')
+        assert_success(resp)
+        return resp['message']
 
     def maintenance_status(self):
-        return NitradoAPI.CLIENT.get('maintenance')['data']
+        resp = NitradoAPI.CLIENT.get('maintenance')
+        assert_success(resp)
+        return resp['data']['maintenance']
 
     def version(self):
-        return NitradoAPI.CLIENT.get('version')['message']
+        resp = NitradoAPI.CLIENT.get('version')
+        assert_success(resp)
+        return resp['message']
 
 
 

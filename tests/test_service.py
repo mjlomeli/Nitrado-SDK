@@ -1,41 +1,38 @@
-import json
 import os
-from src.nitrado import Service
-from src.nitrado import Client
+from nitrado import Service
+from nitrado import Client
 
 
-def pretty_json(data: dict):
-    return json.dumps(data, indent=3, sort_keys=True)
+def set_client():
+    url = "https://api.nitrado.net/"
+    if Service.CLIENT:
+        return Service.CLIENT
+    if not Client.CLIENT:
+        Client.CLIENT = Client(url, key=os.environ['NITRADO_KEY'])
+    Service.CLIENT = Client.CLIENT
 
 
-def test_service_list():
+def test_services():
     services = Service.all()
-    print("#############   Services    ################")
-    for service in services:
-        print(service)
-        print("\n")
-    print("\n")
+    assert len(services) > 0
 
 
-def test_service_details():
+def test_logs():
     service = Service.all()[0]
-    print("#############   DETAILS    ################")
-    print(pretty_json(service.details))
-    print("\n")
+    logs = service.logs()
+    assert type(logs) == list
 
 
-def test_service_logs():
+def test_tasks():
     service = Service.all()[0]
-    print("#############   LOGS    ################")
-    print(pretty_json(service.logs()))
-    print("\n")
+    tasks = service.tasks()
+    assert type(tasks) == list
 
 
-def test_service_tasks():
+def test_notifications():
     service = Service.all()[0]
-    print("#############   Tasks    ################")
-    print(pretty_json(service.tasks()))
-    print("\n")
+    notif = service.notifications()
+    assert type(notif) == list
 
 
 if __name__ == "__main__":
@@ -44,7 +41,7 @@ if __name__ == "__main__":
     Client.CLIENT = client
     Service.CLIENT = client
 
-    test_service_details()
-    test_service_list()
-    test_service_logs()
-    test_service_tasks()
+    test_services()
+    test_notifications()
+    test_logs()
+    test_tasks()

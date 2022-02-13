@@ -2,29 +2,33 @@ from nitrado.client import Client
 from nitrado.game_server import GameServer
 
 
+def assert_success(response):
+    if not response:
+        return
+    if 'status' not in response or response['status'] != 'success':
+        raise AssertionError(f"API returned: {response}")
+
+
 class Service:
     CLIENT = Client.CLIENT
 
     @staticmethod
     def find_by_id(service_id):
-        try:
-            path = ['services', service_id]
-            data = Service.CLIENT.get(path=path)['data']['services']
-            return Service(data)
-        except Exception as e:
-            return None
+        path = ['services', service_id]
+        resp = Service.CLIENT.get(path=path)
+        assert_success(resp)
+        data = resp['data']['services']
+        return Service(data)
 
     @staticmethod
     def all():
         services = []
-        try:
-            servs = Service.CLIENT.get(path='services')['data']['services']
-            for data in servs:
-                services.append(Service(data))
-        except Exception as e:
-            print("[error] Service.all():", e)
+        resp_servers = Service.CLIENT.get(path='services')
+        assert_success(resp_servers)
+        servers = resp_servers['data']['services']
+        for data in servers:
+            services.append(Service(data))
         return services
-
 
     def __init__(self, data):
         assert type(data) == dict, f"constructor only accepts type dict: Service({data})"
@@ -67,11 +71,13 @@ class Service:
 
     def notifications(self):
         notify = Service.CLIENT.get(path=['services', self.id, 'notifications'])
+        assert_success(notify)
         return notify['data']['notifications']
 
     def tasks(self):
         path = ['services', self.id, 'tasks']
         tasks = Service.CLIENT.get(path=path)
+        assert_success(tasks)
         return tasks['data']['tasks']
 
     def create_task(self, action_method=None, month="*", day="*", hour="24", minute="0", weekday="*", action_data=None):
@@ -82,6 +88,7 @@ class Service:
             Service.CLIENT.post(path=path, params=params)
             return True
         except Exception as e:
+            print(e)
             return False
 
     def update_task(self, task_id=None, action_method=None, month="*", day="*", hour="*", minute="*", weekday="*", action_data=None):
@@ -92,6 +99,7 @@ class Service:
             Service.CLIENT.put(path=path, params=params)
             return True
         except Exception as e:
+            print(e)
             return False
 
     def delete_task(self, task_id):
@@ -100,6 +108,7 @@ class Service:
             Service.CLIENT.delete(path=path)
             return True
         except Exception as e:
+            print(e)
             return False
 
     def __repr__(self):

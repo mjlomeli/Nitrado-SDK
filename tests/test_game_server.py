@@ -1,32 +1,36 @@
-import json
-from src.nitrado import Client
-from src.nitrado import GameServer
+from nitrado import Client
+from nitrado import GameServer
+import os
 
 
-def pretty_json(data: dict):
-    return json.dumps(data, indent=3, sort_keys=True)
+def set_client():
+    url = "https://api.nitrado.net/"
+    if GameServer.CLIENT:
+        return GameServer.CLIENT
+    if not Client.CLIENT:
+        Client.CLIENT = Client(url, key=os.environ['NITRADO_KEY'])
+    GameServer.CLIENT = Client.CLIENT
 
 
-def test_commands():
-    print("#############   ListBackups    ################")
-    gameserver = GameServer.all()[0]
-    gameserver.command("")
-    print("\n")
+def test_get_all():
+    set_client()
+    gameserver = GameServer.all()
+    assert len(gameserver) > 0
 
 
 def test_list_backups():
+    test_get_all()
     gameserver = GameServer.all()[0]
-    print("#############   ListBackups    ################")
-    print(pretty_json(gameserver.list_backups()))
-    print("\n")
+    backups_json = gameserver.list_backups()
+    assert backups_json
+    assert 'status' in backups_json
+    assert backups_json['status'] == 'success'
+
+
+def tests():
+    test_get_all()
+    test_list_backups()
 
 
 if __name__ == "__main__":
-    import os
-    access_token = os.environ.get('NITRADO_KEY')
-    client = Client("https://api.nitrado.net/", access_token)
-    Client.CLIENT = client
-    GameServer.CLIENT = client
-
-    # test_commands() # requires RCON but I've yet to test it.
-    test_list_backups()
+    tests()

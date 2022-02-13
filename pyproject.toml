@@ -4,3 +4,13 @@ requires = [
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+
+
+[too.pytest.ini_options]
+addopts = "--cov=nitrado"
+testpaths = [
+    "tests",
+]
+
+[too.mypy]
+mypy_path = "src"
