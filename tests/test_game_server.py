@@ -14,20 +14,20 @@ def test_get_all():
     assert len(gameserver) > 0
 
 
-def test_list_backups():
-    test_get_all()
-    gameserver = GameServer.all()[0]
-    backups_json = gameserver.list_backups()
-    assert backups_json
-    assert 'status' in backups_json
-    assert backups_json['status'] == 'success'
-
-
-def tests():
-    test_get_all()
-    test_list_backups()
-
-
-if __name__ == "__main__":
-    tests()
-    print("passing")
+# def test_list_backups():
+#     test_get_all()
+#     gameserver = GameServer.all()[0]
+#     backups_json = gameserver.list_backups()
+#     assert backups_json
+#     assert 'status' in backups_json
+#     assert backups_json['status'] == 'success'
+#
+#
+# def tests():
+#     test_get_all()
+#     test_list_backups()
+#
+#
+# if __name__ == "__main__":
+#     tests()
+#     print("passing")
