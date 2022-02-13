@@ -1,3 +1,6 @@
 .idea
 **/dist
 **/src/nitrado.egg-info
+.tox
+.pytest_cache
+.mypy_cache
