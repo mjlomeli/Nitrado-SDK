@@ -29,7 +29,7 @@ def test_health_check():
 def test_maintenance():
     api = NitradoAPI()
     maint = api.maintenance_status()
-    assert type(maint) == str
+    assert type(maint) == dict
 
 
 def test_version():
@@ -38,13 +38,15 @@ def test_version():
     assert type(version) == str
 
 
-def test_service():
+def test_services():
     api = NitradoAPI()
+    assert type(api.services) == list
     assert len(api.services) > 0
 
 
 def test_game_servers():
     api = NitradoAPI()
+    assert type(api.game_servers) == list
     assert len(api.game_servers) > 0
 
 
@@ -54,10 +56,11 @@ def tests():
     test_health_check()
     test_maintenance()
     test_version()
-    test_service()
+    test_services()
     test_game_servers()
 
 
 if __name__ == '__main__':
     tests()
+    print("passing")
 

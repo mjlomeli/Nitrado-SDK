@@ -3,9 +3,9 @@ import os
 
 
 def get_client():
-    url = "https://api.nitrado.net/"
     if Client.CLIENT:
         return Client.CLIENT
+    url = "https://api.nitrado.net/"
     key = os.getenv('NITRADO_KEY')
     return Client(url, key)
 
@@ -36,8 +36,11 @@ def test_version():
 
 def test():
     test_ping()
+    test_version()
+    test_maintenance()
 
 
 if __name__ == "__main__":
     test()
+    print("passing")
 
