@@ -16,8 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
-        env:
-          NITRADO_KEY: ${{ secrets.NITRADO_KEY }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
@@ -27,3 +25,5 @@ jobs:
           pip install tox tox-gh-actions
       - name: Test with tox
         run: tox -qq
+        env:
+          NITRADO_KEY: ${{ secrets.NITRADO_KEY }}
