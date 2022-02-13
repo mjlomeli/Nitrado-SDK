@@ -14,16 +14,16 @@ def set_client():
     initialize_client(key, url)
 
 
-def test_client():
-    set_client()
-    print(type(NitradoAPI.CLIENT))
-    print(type(Client.CLIENT))
-    print(type(GameServer.CLIENT))
-    print(type(Service.CLIENT))
-    assert NitradoAPI.CLIENT is not None
-    assert GameServer.CLIENT is not None
-    assert Client.CLIENT is not None
-    assert Service.CLIENT is not None
+# def test_client():
+#     set_client()
+#     print(type(NitradoAPI.CLIENT))
+#     print(type(Client.CLIENT))
+#     print(type(GameServer.CLIENT))
+#     print(type(Service.CLIENT))
+#     assert NitradoAPI.CLIENT is not None
+#     assert GameServer.CLIENT is not None
+#     assert Client.CLIENT is not None
+#     assert Service.CLIENT is not None
 
 #
 # def test_nitrado_init():

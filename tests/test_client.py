@@ -10,6 +10,8 @@ def get_client():
 
 
 def test_ping():
+    env = os.environ.keys()
+    assert os.getenv('NITRADO_KEY') is not None, f"{env}"
     client = get_client()
     ping_json = client.get('ping')
     assert ping_json is not None

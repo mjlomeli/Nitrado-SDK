@@ -8,11 +8,11 @@ def set_client():
     initialize_client(key, url)
 
 
-def test_get_all():
-    set_client()
-    gameserver = GameServer.all()
-    assert len(gameserver) > 0
-
+# def test_get_all():
+#     set_client()
+#     gameserver = GameServer.all()
+#     assert len(gameserver) > 0
+#
 
 # def test_list_backups():
 #     test_get_all()

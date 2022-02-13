@@ -7,11 +7,11 @@ def set_client():
     key = os.getenv('NITRADO_KEY')
     initialize_client(key, url)
 
-
-def test_services():
-    set_client()
-    services = Service.all()
-    assert len(services) > 0
+#
+# def test_services():
+#     set_client()
+#     services = Service.all()
+#     assert len(services) > 0
 
 #
 # def test_logs():
