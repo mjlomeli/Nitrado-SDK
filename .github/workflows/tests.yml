@@ -3,9 +3,6 @@ name: Tests
 on:
   - push
 
-env:
-  NITRADO_KEY: ${{ secrets.NITRADO_KEY }}
-
 jobs:
   test:
     environment: deployment_environment
@@ -29,4 +26,4 @@ jobs:
           python -m pip install --upgrade pip
           pip install tox tox-gh-actions
       - name: Test with tox
-        run: export NITRADO_KEY=$NITRADO_KEY && tox
+        run: tox
