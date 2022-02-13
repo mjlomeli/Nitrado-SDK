@@ -3,6 +3,9 @@ name: Tests
 on:
   - push
 
+env:
+  NITRADO_KEY: ${{ secrets.NITRADO_KEY }}
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
