@@ -20,7 +20,7 @@ class NitradoAPI:
     @classmethod
     def initialize_client(cls, key=None, url=None):
         if not (Client.CLIENT or GameServer.CLIENT or Service.CLIENT or NitradoAPI.CLIENT):
-            key = key or os.environ["NITRADO_KEY"]
+            key = key or os.getenv("NITRADO_KEY")
             url = url or NitradoAPI.NITRADO_API_URL
             assert key and url, f"The url and api key must be provided: url=>{url}, key=>{key}"
             client = Client(url, key)

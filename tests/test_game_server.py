@@ -4,7 +4,7 @@ import os
 
 def set_client():
     url = "https://api.nitrado.net/"
-    key = os.environ['NITRADO_KEY']
+    key = os.getenv('NITRADO_KEY')
     initialize_client(key, url)
 
 
