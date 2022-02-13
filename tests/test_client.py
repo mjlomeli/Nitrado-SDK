@@ -1,13 +1,12 @@
-from nitrado import Client
+from nitrado import Client, initialize_client
 import os
 
 
 def get_client():
-    if Client.CLIENT:
-        return Client.CLIENT
     url = "https://api.nitrado.net/"
-    key = os.getenv('NITRADO_KEY')
-    return Client(url, key)
+    key = os.environ['NITRADO_KEY']
+    initialize_client(key, url)
+    return Client.CLIENT
 
 
 def test_ping():

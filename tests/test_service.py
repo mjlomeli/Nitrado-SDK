@@ -1,15 +1,11 @@
 import os
-from nitrado import Service
-from nitrado import Client
+from nitrado import Service, initialize_client
 
 
 def set_client():
-    if Service.CLIENT:
-        return
     url = "https://api.nitrado.net/"
-    if not Client.CLIENT:
-        Client.CLIENT = Client(url, key=os.environ['NITRADO_KEY'])
-    Service.CLIENT = Client.CLIENT
+    key = os.environ['NITRADO_KEY']
+    initialize_client(key, url)
 
 
 def test_services():

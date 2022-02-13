@@ -1,4 +1,4 @@
-from nitrado import NitradoAPI, GameServer, Client
+from nitrado import NitradoAPI, GameServer, Client, Service, initialize_client
 import os
 
 
@@ -8,16 +8,27 @@ def success(response):
     return 'status' in response and response['status'] == 'success'
 
 
+def set_client():
+    url = "https://api.nitrado.net/"
+    key = os.environ['NITRADO_KEY']
+    initialize_client(key, url)
+
+
 def test_client():
-    NitradoAPI.initialize_client(os.getenv('NITRADO_KEY'))
-    assert NitradoAPI.CLIENT
-    assert GameServer.CLIENT
-    assert Client.CLIENT
+    set_client()
+    print(type(NitradoAPI.CLIENT))
+    print(type(Client.CLIENT))
+    print(type(GameServer.CLIENT))
+    print(type(Service.CLIENT))
+    assert NitradoAPI.CLIENT is not None
+    assert GameServer.CLIENT is not None
+    assert Client.CLIENT is not None
+    assert Service.CLIENT is not None
 
 
 def test_nitrado_init():
     api = NitradoAPI()
-    assert api
+    assert api is not None
 
 
 def test_health_check():

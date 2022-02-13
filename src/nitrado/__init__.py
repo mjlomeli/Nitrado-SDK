@@ -4,6 +4,8 @@ from nitrado.game_server import GameServer
 from nitrado.client import Client
 
 
+__all__ = ['NitradoAPI', 'Service', 'GameServer', 'Client']
+
+
 def initialize_client(key=None, url=None):
     NitradoAPI.initialize_client(key, url)
-

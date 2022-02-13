@@ -1,15 +1,11 @@
-from nitrado import Client
-from nitrado import GameServer
+from nitrado import initialize_client, GameServer
 import os
 
 
 def set_client():
     url = "https://api.nitrado.net/"
-    if GameServer.CLIENT:
-        return GameServer.CLIENT
-    if not Client.CLIENT:
-        Client.CLIENT = Client(url, key=os.environ['NITRADO_KEY'])
-    GameServer.CLIENT = Client.CLIENT
+    key = os.environ['NITRADO_KEY']
+    initialize_client(key, url)
 
 
 def test_get_all():

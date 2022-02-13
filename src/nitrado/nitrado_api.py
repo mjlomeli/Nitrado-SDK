@@ -71,6 +71,3 @@ class NitradoAPI:
         resp = NitradoAPI.CLIENT.get('version')
         assert_success(resp)
         return resp['message']
-
-
-
