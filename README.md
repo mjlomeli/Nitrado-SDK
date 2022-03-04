@@ -1,6 +1,8 @@
 # Python Nitrado SDK
 [![Testing](https://github.com/mjlomeli/NitradoAPI/actions/workflows/tests.yml/badge.svg)](#)
 
+``` Removed API Key for testing, should still work. Getting access to a new API key at the moment. ```
+
 A Python based SDK for the [Nitrado RESTful API](https://doc.nitrado.net/) published at [PyPI](https://pypi.org/project/nitrado/).
 
 
