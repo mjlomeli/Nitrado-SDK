@@ -78,6 +78,7 @@ then
   git commit -m "uploaded to pypi version $_major_version.$_minor_version.$_revision"
   git push
   sudo rm -r dist &>/dev/null
+  sudo rm -r "src/$_package_name.egg-info" &>/dev/null
 elif [[ "$OSTYPE" == "msys" ]]
 then
   # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
@@ -89,6 +90,7 @@ then
   git commit -m "uploaded to pypi version $_major_version.$_minor_version.$_revision"
   git push
   rm -r dist &>/dev/null
+  rm -r "src/$_package_name.egg-info" &>/dev/null
 else
   printf "Haven't created a command for $OSTYPE"
   exit 1
