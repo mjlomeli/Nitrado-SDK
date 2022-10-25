@@ -140,7 +140,7 @@ class GameServer:
     def download_file(self, file_path):
         assert GameServer.CLIENT is not None, "A client must be initialized for GameServer"
         path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
-        params = {'path': file_path}
+        params = {'file': file_path}
         return GameServer.CLIENT.get(path=path, params=params)
 
     def rename_file(self, file_path, target_path, target_name):
