@@ -1,4 +1,4 @@
-from nitrado.client import Client
+from nitrado.tools import Client
 import requests
 from pathlib import Path, WindowsPath
 

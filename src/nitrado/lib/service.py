@@ -1,5 +1,5 @@
-from nitrado.client import Client
-from nitrado.game_server import GameServer
+from nitrado.tools import Client
+from nitrado.lib.game_server import GameServer
 
 
 def assert_success(response):

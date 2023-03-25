@@ -1,6 +1,5 @@
-from nitrado.client import Client
-from nitrado.game_server import GameServer
-from nitrado.service import Service
+from nitrado.tools import Client
+from nitrado.lib import GameServer, Service
 import requests
 from requests import RequestException
 import os
