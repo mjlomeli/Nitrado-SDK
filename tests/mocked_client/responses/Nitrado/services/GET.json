@@ -1,0 +1,260 @@
+{
+  "status_code": 404,
+  "ok": false,
+  "headers": {},
+  "json": {
+    "status": "success",
+    "data": {
+      "services": [
+        {
+          "id": 1,
+          "location_id": 3,
+          "status": "active",
+          "websocket_token": "41e4b1157551195144ceaf0677d2",
+          "user_id": 123456,
+          "comment": null,
+          "auto_extension": false,
+          "auto_extension_duration": 720,
+          "auto_extension_external": false,
+          "type": "gameserver",
+          "type_human": "Publicserver 20 Slots",
+          "managedroot_id": null,
+          "details": {
+            "address": "5.62.66.117:10020",
+            "name": "[US] - Arkpocalypse - Island",
+            "game": "ARK: Survival Evolved (Xbox One)",
+            "portlist_short": "arkxb",
+            "folder_short": "arkxb",
+            "slots": 20
+          },
+          "start_date": "2023-01-02T21:18:43",
+          "suspend_date": "2023-04-03T05:21:17",
+          "delete_date": "2023-04-10T05:21:17",
+          "suspending_in": 766277,
+          "deleting_in": 1371077,
+          "username": "ni123456_1",
+          "roles": [
+            "ROLE_OWNER"
+          ]
+        },
+        {
+          "id": 2,
+          "location_id": 3,
+          "status": "active",
+          "websocket_token": "41e4b1119abef35751447d2",
+          "user_id": 123456,
+          "comment": null,
+          "auto_extension": false,
+          "auto_extension_duration": 720,
+          "auto_extension_external": false,
+          "type": "gameserver",
+          "type_human": "Publicserver 20 Slots",
+          "managedroot_id": null,
+          "details": {
+            "address": "5.62.66.117:10020",
+            "name": "[US] - Arkpocalypse - Valgero",
+            "game": "ARK: Survival Evolved (Xbox One)",
+            "portlist_short": "arkxb",
+            "folder_short": "arkxb",
+            "slots": 20
+          },
+          "start_date": "2023-01-02T21:18:43",
+          "suspend_date": "2023-04-03T05:21:17",
+          "delete_date": "2023-04-10T05:21:17",
+          "suspending_in": 766277,
+          "deleting_in": 1371077,
+          "username": "ni123456_1",
+          "roles": [
+            "ROLE_OWNER"
+          ]
+        },
+        {
+          "id": 3,
+          "location_id": 3,
+          "status": "active",
+          "websocket_token": "41e4b11575515144ceaf0677d2",
+          "user_id": 123456,
+          "comment": null,
+          "auto_extension": false,
+          "auto_extension_duration": 720,
+          "auto_extension_external": false,
+          "type": "gameserver",
+          "type_human": "Publicserver 20 Slots",
+          "managedroot_id": null,
+          "details": {
+            "address": "5.62.66.117:10020",
+            "name": "[US] - Arkpocalypse - The Center",
+            "game": "ARK: Survival Evolved (Xbox One)",
+            "portlist_short": "arkxb",
+            "folder_short": "arkxb",
+            "slots": 20
+          },
+          "start_date": "2023-01-02T21:18:43",
+          "suspend_date": "2023-04-03T05:21:17",
+          "delete_date": "2023-04-10T05:21:17",
+          "suspending_in": 766277,
+          "deleting_in": 1371077,
+          "username": "ni123456_1",
+          "roles": [
+            "ROLE_OWNER"
+          ]
+        },
+        {
+          "id": 4,
+          "location_id": 3,
+          "status": "active",
+          "websocket_token": "41e4b1155119ab4ce",
+          "user_id": 123456,
+          "comment": null,
+          "auto_extension": false,
+          "auto_extension_duration": 720,
+          "auto_extension_external": false,
+          "type": "gameserver",
+          "type_human": "Publicserver 20 Slots",
+          "managedroot_id": null,
+          "details": {
+            "address": "5.62.66.117:10020",
+            "name": "[US] - Arkpocalypse - Scorched Earth",
+            "game": "ARK: Survival Evolved (Xbox One)",
+            "portlist_short": "arkxb",
+            "folder_short": "arkxb",
+            "slots": 20
+          },
+          "start_date": "2023-01-02T21:18:43",
+          "suspend_date": "2023-04-03T05:21:17",
+          "delete_date": "2023-04-10T05:21:17",
+          "suspending_in": 766277,
+          "deleting_in": 1371077,
+          "username": "ni123456_1",
+          "roles": [
+            "ROLE_OWNER"
+          ]
+        },
+        {
+          "id": 5,
+          "location_id": 3,
+          "status": "suspended",
+          "websocket_token": "c28d226c50104a1b3184d7b3910967",
+          "user_id": 123456,
+          "comment": null,
+          "auto_extension": false,
+          "auto_extension_duration": 720,
+          "auto_extension_external": false,
+          "type": "gameserver",
+          "type_human": "Publicserver 32 Slots",
+          "managedroot_id": null,
+          "details": {
+            "address": "85.190.152.206:10260",
+            "name": "[US] - Arkpocalypse - Ragnarok",
+            "game": "ARK: Survival Evolved (Xbox One)",
+            "portlist_short": "arkxb",
+            "folder_short": "arkxb",
+            "slots": 32
+          },
+          "start_date": "2023-02-16T03:24:34",
+          "suspend_date": "2023-03-18T03:39:34",
+          "delete_date": "2023-04-17T04:39:42",
+          "suspending_in": 0,
+          "deleting_in": 1973382,
+          "username": "ni8478651_9",
+          "roles": [
+            "ROLE_OWNER"
+          ]
+        },
+        {
+          "id": 6,
+          "location_id": 3,
+          "status": "suspended",
+          "websocket_token": "89f9d855a114402eed1c1d8058d",
+          "user_id": 123456,
+          "comment": null,
+          "auto_extension": false,
+          "auto_extension_duration": 720,
+          "auto_extension_external": false,
+          "type": "gameserver",
+          "type_human": "Publicserver 32 Slots",
+          "managedroot_id": null,
+          "details": {
+            "address": "37.10.125.95:10038",
+            "name": "[US] - Arkpocalypse - Aberration",
+            "game": "ARK: Survival Evolved (Xbox One)",
+            "portlist_short": "arkxb",
+            "folder_short": "arkxb",
+            "slots": 32
+          },
+          "start_date": "2023-02-16T03:26:15",
+          "suspend_date": "2023-03-18T03:41:15",
+          "delete_date": "2023-04-17T04:41:21",
+          "suspending_in": 0,
+          "deleting_in": 1973481,
+          "username": "ni1299121_4787",
+          "roles": [
+            "ROLE_OWNER"
+          ]
+        },
+        {
+          "id": 7,
+          "location_id": 3,
+          "status": "suspended",
+          "websocket_token": "a7d39e9715568f2b90e2648dd6cb",
+          "user_id": 123456,
+          "comment": null,
+          "auto_extension": false,
+          "auto_extension_duration": 720,
+          "auto_extension_external": false,
+          "type": "gameserver",
+          "type_human": "Publicserver 10 Slots",
+          "managedroot_id": null,
+          "details": {
+            "address": "95.156.238.191:10090",
+            "name": "[US] - Arkpocalypse - Extinction",
+            "game": "ARK: Survival Evolved (Xbox One)",
+            "portlist_short": "arkxb",
+            "folder_short": "arkxb",
+            "slots": 10
+          },
+          "start_date": "2023-02-23T02:31:50",
+          "suspend_date": "2023-03-25T02:46:50",
+          "delete_date": "2023-04-24T03:46:51",
+          "suspending_in": 0,
+          "deleting_in": 2575011,
+          "username": "ni8478651_10",
+          "roles": [
+            "ROLE_OWNER"
+          ]
+        },
+        {
+          "id": 8,
+          "location_id": 3,
+          "status": "suspended",
+          "websocket_token": "f30b84132f2681b72a9efaf38f55f",
+          "user_id": 123456,
+          "comment": null,
+          "auto_extension": false,
+          "auto_extension_duration": 720,
+          "auto_extension_external": false,
+          "type": "gameserver",
+          "type_human": "Publicserver 10 Slots",
+          "managedroot_id": null,
+          "details": {
+            "address": "85.190.156.116:11140",
+            "name": "[US] - Arkpocalypse - Genesis 1",
+            "game": "ARK: Survival Evolved (Xbox One)",
+            "portlist_short": "arkxb",
+            "folder_short": "arkxb",
+            "slots": 10
+          },
+          "start_date": "2023-02-23T02:34:01",
+          "suspend_date": "2023-03-25T02:49:01",
+          "delete_date": "2023-04-24T03:49:05",
+          "suspending_in": 0,
+          "deleting_in": 2575145,
+          "username": "ni8478651_11",
+          "roles": [
+            "ROLE_OWNER"
+          ]
+        }
+      ]
+    }
+  }
+}

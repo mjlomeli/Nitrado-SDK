@@ -1,0 +1,7 @@
+{
+  "status_code": 200,
+  "ok": true,
+  "headers": {},
+  "json": {"status": "success", "data": {"notifications": []}}
+
+}

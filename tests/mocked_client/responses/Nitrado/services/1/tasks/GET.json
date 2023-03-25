@@ -1,0 +1,26 @@
+{
+  "status_code": 200,
+  "ok": true,
+  "headers": {},
+  "json": {
+    "status": "success",
+    "data": {
+      "tasks": [
+        {
+          "id": 8394912,
+          "status": "error",
+          "minute": "5",
+          "hour": "3",
+          "day": "*",
+          "month": "*",
+          "weekday": "*",
+          "next_run": "2023-03-11T03:05:00",
+          "last_run": "2023-03-10T03:05:16",
+          "timezone": "America/Los_Angeles",
+          "action_method": "game_server_restart",
+          "action_data": null
+        }
+      ]
+    }
+  }
+}

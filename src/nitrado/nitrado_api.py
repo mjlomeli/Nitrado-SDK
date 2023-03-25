@@ -14,19 +14,6 @@ def assert_success(response):
 
 class NitradoAPI:
     NITRADO_API_URL = "https://api.nitrado.net/"
-    CLIENT = Client.CLIENT
-
-    @classmethod
-    def initialize_client(cls, key=None, url=None):
-        if not (Client.CLIENT or GameServer.CLIENT or Service.CLIENT or NitradoAPI.CLIENT):
-            key = key or os.getenv("NITRADO_KEY")
-            url = url or NitradoAPI.NITRADO_API_URL
-            assert key and url, f"The url and api key must be provided: url=>{url}, key=>{key}"
-            client = Client(url, key)
-            Client.CLIENT = client
-            GameServer.CLIENT = client
-            Service.CLIENT = client
-            NitradoAPI.CLIENT = client
 
     @classmethod
     def unofficial_server_list(cls):
@@ -51,22 +38,52 @@ class NitradoAPI:
         req = requests.get("http://arkdedicated.com/xboxbanlist.txt")
         return req.text.split('\r\n')
 
-    def __init__(self, key=None, url=None):
-        NitradoAPI.initialize_client(key, url)
-        self.services = Service.all()
-        self.game_servers = GameServer.all()
+    def __init__(self, key: str or None = None, url: str or None = None):
+        key = key or os.getenv("NITRADO_KEY")
+        url = url or NitradoAPI.NITRADO_API_URL
+        self.__client = Client(url or NitradoAPI.NITRADO_API_URL, key)
+
+    def services(self):
+        resp_servers = self.__client.get(path='services')
+        assert_success(resp_servers)
+        servers = resp_servers['data']['services']
+        return [Service(self.__client, data) for data in servers]
+
+    def game_servers(self):
+        resp = self.__client.get(path='services')
+        assert_success(resp)
+        service_ids = [serv['id'] for serv in resp['data']['services']]
+        games = []
+        for serv_id in service_ids:
+            game_server = self.find_game_by_service_id(serv_id)
+            games.append(game_server)
+        return games
+
+    def find_game_by_service_id(self, service_id: str):
+        path = ['services', service_id, 'gameservers']
+        resp = self.__client.get(path=path)
+        assert_success(resp)
+        data = resp['data']['gameserver']
+        return GameServer(self.__client, data)
+
+    def find_service_by_id(self, service_id: str):
+        path = ['services', service_id]
+        resp = self.__client.get(path=path)
+        assert_success(resp)
+        data = resp['data']['services']
+        return Service(self.__client, data)
 
     def health_check(self):
-        resp = NitradoAPI.CLIENT.get('ping')
+        resp = self.__client.get('ping')
         assert_success(resp)
         return resp['message']
 
     def maintenance_status(self):
-        resp = NitradoAPI.CLIENT.get('maintenance')
+        resp = self.__client.get('maintenance')
         assert_success(resp)
         return resp['data']['maintenance']
 
     def version(self):
-        resp = NitradoAPI.CLIENT.get('version')
+        resp = self.__client.get('version')
         assert_success(resp)
         return resp['message']

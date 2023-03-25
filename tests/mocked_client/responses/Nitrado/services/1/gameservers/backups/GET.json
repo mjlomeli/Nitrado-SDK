@@ -1,0 +1,75 @@
+{
+  "status_code": 404,
+  "ok": false,
+  "headers": {},
+  "json": {
+    "status": "success",
+    "data": {
+      "backups": {
+        "database": {
+          "ni123456_1_DB": [
+            {
+              "backup_file": "ni123456_1_DB-1679164120.sql.gz",
+              "backup_timestamp": 1679164120,
+              "backup_size": 519
+            },
+            {
+              "backup_file": "ni123456_1_DB-1679365910.sql.gz",
+              "backup_timestamp": 1679365910,
+              "backup_size": 519
+            },
+            {
+              "backup_file": "ni123456_1_DB-1679556352.sql.gz",
+              "backup_timestamp": 1679556352,
+              "backup_size": 519
+            },
+            {
+              "backup_file": "ni123456_1_DB-1679724204.sql.gz",
+              "backup_timestamp": 1679724204,
+              "backup_size": 519
+            }
+          ]
+        },
+        "gameserver": {
+          "arkxb": [
+            {
+              "backup_type": "master",
+              "backup_number": 43,
+              "backup_timestamp": 1678943636,
+              "backup_size": 688575277,
+              "backup_file_size": 688575277
+            },
+            {
+              "backup_type": "incremental",
+              "backup_number": 44,
+              "backup_timestamp": 1679164122,
+              "backup_size": 1020997201,
+              "backup_file_size": 332421924
+            },
+            {
+              "backup_type": "incremental",
+              "backup_number": 45,
+              "backup_timestamp": 1679365913,
+              "backup_size": 1204712343,
+              "backup_file_size": 183715142
+            },
+            {
+              "backup_type": "incremental",
+              "backup_number": 46,
+              "backup_timestamp": 1679556355,
+              "backup_size": 1352008693,
+              "backup_file_size": 147296350
+            },
+            {
+              "backup_type": "incremental",
+              "backup_number": 47,
+              "backup_timestamp": 1679724208,
+              "backup_size": 1481348169,
+              "backup_file_size": 129339476
+            }
+          ]
+        }
+      }
+    }
+  }
+}

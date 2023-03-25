@@ -1,5 +1,4 @@
 from nitrado.tools import Client
-from nitrado.lib.game_server import GameServer
 
 
 def assert_success(response):
@@ -10,27 +9,10 @@ def assert_success(response):
 
 
 class Service:
-    CLIENT = Client.CLIENT
 
-    @staticmethod
-    def find_by_id(service_id):
-        path = ['services', service_id]
-        resp = Service.CLIENT.get(path=path)
-        assert_success(resp)
-        data = resp['data']['services']
-        return Service(data)
+    def __init__(self, client: Client, data: dict):
+        self.__client = client
 
-    @staticmethod
-    def all():
-        services = []
-        resp_servers = Service.CLIENT.get(path='services')
-        assert_success(resp_servers)
-        servers = resp_servers['data']['services']
-        for data in servers:
-            services.append(Service(data))
-        return services
-
-    def __init__(self, data):
         assert type(data) == dict, f"constructor only accepts type dict: Service({data})"
         self.id = data['id'] if 'id' in data else None
         self.location_id = data['location_id'] if 'location_id' in data else None
@@ -52,31 +34,32 @@ class Service:
         self.suspending_in = data['suspending_in'] if 'suspending_in' in data else None
         self.deleting_in = data['deleting_in'] if 'deleting_in' in data else None
 
-    def game_server(self):
-        return GameServer.find_by_id(self.id) if self.id else None
+    def __get_log_page(self, page: int) -> dict:
+        log = self.__client.get(path=['services', self.id, 'logs'], data={'page': page})
+        assert 'status' in log, "Failed to communicate to server."
+        assert log['status'] == 'success', "Failed to get logs."
+        return log['data']
 
-    def logs(self, page=None):
+    def logs(self, page: int = None):
         if page:
-            return Service.CLIENT.get(path=['services', self.id, 'logs'], data={'page': page})
-        logs = []
-        log = Service.CLIENT.get(path=['services', self.id, 'logs'], data={'page': page})
-        logs += log['data']['logs']
-        current_page = 2
-        last_page = log['data']['page_count']
-        while current_page < last_page:
-            log = Service.CLIENT.get(path=['services', self.id, 'logs'], data={'page': page})
-            logs += log['data']['logs']
-            current_page += 1
+            return self.__get_log_page(page)['logs']
+        data = self.__get_log_page(1)
+        logs = data['logs']
+        current_page_num = 2
+        while current_page_num <= data['page_count']:
+            data = self.__get_log_page(current_page_num)
+            logs += data['data']['logs']
+            current_page_num += 1
         return logs
 
     def notifications(self):
-        notify = Service.CLIENT.get(path=['services', self.id, 'notifications'])
+        notify = self.__client.get(path=['services', self.id, 'notifications'])
         assert_success(notify)
         return notify['data']['notifications']
 
     def tasks(self):
         path = ['services', self.id, 'tasks']
-        tasks = Service.CLIENT.get(path=path)
+        tasks = self.__client.get(path=path)
         assert_success(tasks)
         return tasks['data']['tasks']
 
@@ -85,7 +68,7 @@ class Service:
         params = {'action_method': action_method, 'action_data': action_data, 'minute': minute,
                   'hour': hour, 'day': day, 'month': month, 'weekday': weekday}
         try:
-            Service.CLIENT.post(path=path, params=params)
+            self.__client.post(path=path, params=params)
             return True
         except Exception as e:
             print(e)
@@ -96,7 +79,7 @@ class Service:
         params = {'action_method': action_method, 'action_data': action_data, 'minute': minute,
                   'hour': hour, 'day': day, 'month': month, 'weekday': weekday}
         try:
-            Service.CLIENT.put(path=path, params=params)
+            self.__client.put(path=path, params=params)
             return True
         except Exception as e:
             print(e)
@@ -105,7 +88,7 @@ class Service:
     def delete_task(self, task_id):
         path = ['services', self.id, 'tasks', task_id]
         try:
-            Service.CLIENT.delete(path=path)
+            self.__client.delete(path=path)
             return True
         except Exception as e:
             print(e)
