@@ -1,3 +1,9 @@
+"""
+Tests Nitrado connections. If any fail, then this means any of the following:
+    - something is wrong with Nitrado
+    - the URLs are no longer valid
+    - responses from Nitrado has changed
+"""
 from nitrado import Client
 import os
 
