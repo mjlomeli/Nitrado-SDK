@@ -2,12 +2,12 @@ from nitrado import GameServer
 from tests.mocked_client import MockedClient
 
 
-def get_client():
+def get_client() -> MockedClient:
     url = "https://api.nitrado.net/"
     return MockedClient(url)
 
 
-def get_a_game_server():
+def get_a_game_server() -> GameServer:
     client = get_client()
     data = {
         "status": "started",

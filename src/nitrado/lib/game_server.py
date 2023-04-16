@@ -1,103 +1,87 @@
+from nitrado.lib.errors import assert_response_is_ok
 from nitrado.tools import Client
 import requests
-from pathlib import Path, WindowsPath
-
-
-def assert_success(response):
-    if not response:
-        return
-    if 'status' not in response or response['status'] != 'success':
-        raise AssertionError(f"API returned: {response}")
-
-
-def assert_request(req):
-    if not req.ok:
-        code = req.status_code
-        reason = req.reason
-        raise requests.RequestException(f"Url error => {code} {reason} for:", req.url)
+from pathlib import Path
+import json
 
 
 class GameServer:
-    def __init__(self, client: Client, data):
+    def __init__(self, client: Client, data: dict):
         self.__client = client
-        print(data)
+        self.__data = data
 
-        self.status = data['status'] if 'status' in data else None
-        self.last_status_change = data['last_status_change'] if 'last_status_change' in data else None
-        self.must_be_started = data['must_be_started'] if 'must_be_started' in data else None
-        self.websocket_token = data['websocket_token'] if 'websocket_token' in data else None
-        self.hostsystems = data['hostsystems'] if 'hostsystems' in data else None
-        self.username = data['username'] if 'username' in data else None
-        self.user_id = data['user_id'] if 'user_id' in data else None
-        self.service_id = data['service_id'] if 'service_id' in data else None
-        self.location_id = data['location_id'] if 'location_id' in data else None
-        self.minecraft_mode = data['minecraft_mode'] if 'minecraft_mode' in data else None
-        self.ip = data['ip'] if 'ip' in data else None
-        self.ipv6 = data['ipv6'] if 'ipv6' in data else None
-        self.port = data['port'] if 'port' in data else None
-        self.query_port = data['query_port'] if 'query_port' in data else None
-        self.rcon_port = data['rcon_port'] if 'rcon_port' in data else None
-        self.label = data['label'] if 'label' in data else None
-        self.type = data['type'] if 'type' in data else None
-        self.memory = data['memory'] if 'memory' in data else None
-        self.memory_mb = data['memory_mb'] if 'memory_mb' in data else None
-        self.game = data['game'] if 'game' in data else None
-        self.game_human = data['game_human'] if 'game_human' in data else None
-        self.game_specific = data['game_specific'] if 'game_specific' in data else None
-        self.modpacks = data['modpacks'] if 'modpacks' in data else None
-        self.slots = data['slots'] if 'slots' in data else None
-        self.location = data['location'] if 'location' in data else None
-        self.credentials = data['credentials'] if 'credentials' in data else None
-        self.settings = data['settings'] if 'settings' in data else None
-        self.quota = data['quota'] if 'quota' in data else None
-        self.query = data['query'] if 'query' in data else None
+        self.status = None
+        self.last_status_change = None
+        self.must_be_started = None
+        self.websocket_token = None
+        self.hostsystems = None
+        self.username = None
+        self.user_id = None
+        self.service_id = None
+        self.location_id = None
+        self.minecraft_mode = None
+        self.ip = None
+        self.ipv6 = None
+        self.port = None
+        self.query_port = None
+        self.rcon_port = None
+        self.label = None
+        self.type = None
+        self.memory = None
+        self.memory_mb = None
+        self.game = None
+        self.game_human = None
+        self.game_specific = None
+        self.modpacks = None
+        self.slots = None
+        self.location = None
+        self.credentials = None
+        self.settings = None
+        self.quota = None
+        self.query = None
+        for k, v in data.items():
+            self.__dict__[k] = v
 
-    def cluster_id(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'games', 'arkse', 'gen_cluster_id']
-        resp = self.__client.get(path=path)
-        assert_success(resp)
-        return resp['data']['clusterid']
+    def cluster_id(self) -> str:
+        path = f'/services/{self.service_id}/gameservers/games/arkse/gen_cluster_id'
+        response = self.__client.get(path=path)
+        data: dict = response.json()['data']
+        return data['clusterid']
 
-    def logs_shooter_game(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+    def logs_shooter_game(self) -> str:
+        path = f'/services/{self.service_id}/gameservers/file_server/download'
         params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log"}
-        resp_url = self.__client.get(path=path, params=params)
-        assert_success(resp_url)
-        url = resp_url['data']['token']['url']
-        req = requests.get(url)
-        assert_request(req)
-        return req.text.replace("\r\n", "\n")
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        url = data['token']['url']
+        log_response = requests.get(url)
+        assert_response_is_ok(log_response)
+        return log_response.text.replace("\r\n", "\n")
 
-    def logs_restart(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+    def logs_restart(self) -> str:
+        path = f'/services/{self.service_id}/gameservers/file_server/download'
         params = {'file': f"/games/{self.username}/ftproot/restart.log"}
-        resp_url = self.__client.get(path=path, params=params)
-        assert_success(resp_url)
-        url = resp_url['data']['token']['url']
-        req = requests.get(url)
-        assert_request(req)
-        return req.text.replace("\r\n", "\n")
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        url = data['token']['url']
+        log_response = requests.get(url)
+        assert_response_is_ok(log_response)
+        return log_response.text.replace("\r\n", "\n")
 
-    def logs_shooter_game_last(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+    def logs_shooter_game_last(self) -> str:
+        path = f'/services{self.service_id}/gameservers/file_server/download'
         params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
-        resp_url = self.__client.get(path=path, params=params)
-        assert_success(resp_url)
-        url = resp_url['data']['token']['url']
-        req = requests.get(url)
-        assert_request(req)
-        return req.text.replace("\r\n", "\n")
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        url = data['token']['url']
+        log_response = requests.get(url)
+        assert_response_is_ok(log_response)
+        return log_response.text.replace("\r\n", "\n")
 
-    def logs_download(self, directory=Path.cwd()):
-        assert type(directory) == str or type(directory) == Path or type(
-            directory) == WindowsPath, "Path provided must be of type string"
-        location = Path(directory)
+    def logs_download(self, directory: str = None) -> None:
+        location = Path(directory or Path.cwd())
         if not location.is_dir():
-            raise FileNotFoundError(f"The directory provided does not exist: {directory}")
+            raise NotADirectoryError(f"Directory does not exist: {directory}")
         with open(location / Path('shooter_games.txt'), 'w') as w:
             w.write(self.logs_shooter_game())
         with open(location / Path('shooter_games_last.txt'), 'w') as w:
@@ -106,351 +90,289 @@ class GameServer:
             w.write(self.logs_restart())
 
     def start(self, game):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'games', 'start']
+        path = f'/services/{self.service_id}/gameservers/games/start'
         params = {'game': game}
         return self.__client.post(path=path, params=params)
 
     def backup_restore(self, folder, backup_id):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'backups', 'gameserver']
+        path = f'/services/{self.service_id}/gameservers/backups/gameserver'
         params = {'folder': folder, 'backup': backup_id}
         return self.__client.post(path=path, params=params)
 
     def download_file(self, file_path):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'download']
+        path = f'/services/{self.service_id}/gameservers/file_server/download'
         params = {'file': file_path}
         return self.__client.get(path=path, params=params)
 
     def rename_file(self, file_path, target_path, target_name):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'move']
+        path = f'/services/{self.service_id}/gameservers/file_server/move'
         params = {'source_path': file_path, 'target_path': target_path, 'target_filename': target_name}
         return self.__client.post(path=path, params=params)
 
     # def rename_file(self, file_path, new_name):
-    #     path = ['services', self.service_id, 'gameservers', 'file_server', 'move']
+    #     path = f'/services/{self.service_id}/gameservers/file_server/move'
     #     target_path = '/'.join(file_path.split("/")[:-1])
     #     params = {'source_path': file_path, 'target_path': target_path, 'target_filename': new_name}
     #     return self._client.post(path=path, params=params)
 
     def donation_history(self, page=0):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'boost', 'history']
+        path = f'/services/{self.service_id}/gameservers/boost/history'
         params = {'page': page}
         return self.__client.get(path=path, params=params)
 
     def donation_settings(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'boost']
+        path = f'/services/{self.service_id}/gameservers/boost'
         return self.__client.get(path=path)['data']
 
     def update_donation_settings(self, enable=True, message=None, welcome_message=None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'boost']
+        path = f'/services/{self.service_id}/gameservers/boost'
         params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
         return self.__client.put(path=path, params=params)
 
     def players(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ["services", self.service_id, "gameservers", "games", "players"]
-        resp_players = self.__client.get(path=path)
-        assert_success(resp_players)
-        return resp_players['data']['players']
+        path = f'/services/{self.service_id}/gameservers/games/players'
+        response = self.__client.get(path=path)
+        data: dict = response.json()['data']
+        return data['players']
 
     def white_list_player(self, gamertag):
         """
         Player_Management - Add Player to Whitelist
         :param gamertag: Player unique identifier.
         """
-        assert self.__client is not None, "A client must be initialized for GameServer"
         params = {"identifer": gamertag}
-        path = ["services", self.service_id, "gameservers", "games", "whitelist"]
+        path = f'/services/{self.service_id}/gameservers/games/whitelist'
         return self.__client.put(path=path, params=params)
 
     def make_admin(self, gamertag):
-        assert self.__client is not None, "A client must be initialized for GameServer"
         """ Must whitelist the player first """
-        path = ['services', self.service_id, 'gameservers', 'adminlist']
+        path = f'/services/{self.service_id}/gameservers/adminlist'
         params = {'identifier': gamertag}
         return self.__client.post(path=path, params=params)
 
     def details(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers']
-        resp_details = self.__client.get(path=path)
-        assert_success(resp_details)
-        return resp_details['data']['gameserver']
+        path = f'/services/{self.service_id}/gameservers'
+        response = self.__client.get(path=path)
+        data: dict = response.json()['data']
+        return data['gameserver']
 
     def restart(self, restart_message: str = None, log_message: str = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'restart']
+        path = f'/services/{self.service_id}/gameservers/restart'
         params = {"restart_message": restart_message, "message": log_message}
-        resp_restart = self.__client.post(path=path, params=params)
-        assert_success(resp_restart)
-        return resp_restart['status'] == 'success'
+        response = self.__client.post(path=path, params=params)
+        return response.json()['status'] == 'success'
 
     def stop(self, message=None, stop_message=None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
         try:
-            path = ['services', self.service_id, 'gameservers', 'stop']
+            path = f'/services/{self.service_id}/gameservers/stop'
             params = {'message': message, 'stop_message': stop_message}
-            return self.__client.post(path=path, params=params)['status'] == 'success'
+            response = self.__client.post(path=path, params=params)
+            return response.json()['status'] == 'success'
         except Exception as e:
             print(e)
             return False
 
     def list_backups(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'backups']
-        return self.__client.get(path=path)
+        path = f'/services/{self.service_id}/gameservers/backups'
+        response = self.__client.get(path=path)
+        return response.json()
 
     def command(self, command):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'app_server', 'command']
+        path = f'/services/{self.service_id}/gameservers/app_server/command'
         params = {'command': command}
         return self.__client.post(path=path, params=params)
 
     def ping(self, command):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'app_server']
+        path = f'/services/{self.service_id}/gameservers/app_server'
         return self.__client.get(path=path, params={'command': command})
 
     def restore_database(self, database: str, timestamp: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'backups', 'database']
+        path = f'/services/{self.service_id}/gameservers/backups/database'
         params = {'database': database, 'timestamp': timestamp}
         return self.__client.post(path=path, params=params)
 
     def ftp_change_password(self, password: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'ftp', 'password']
+        path = f'/services/{self.service_id}/gameservers/ftp/password'
         params = {'password': password}
         return self.__client.post(path=path, params=params)
 
     def bookmarks(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'bookmarks']
+        path = f'/services/{self.service_id}/gameservers/file_server/bookmarks'
         return self.__client.get(path=path)
 
     def copy_file(self, source_path: str, target_path: str, target_name: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'copy']
+        path = f'/services/{self.service_id}/gameservers/file_server/copy'
         params = {'source_path': source_path, 'target_path': target_path, 'target_name': target_name}
         return self.__client.post(path=path, params=params)
 
     def create_directory(self, dir_path, name):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'mkdir']
+        path = f'/services/{self.service_id}/gameservers/file_server/mkdir'
         params = {'path': dir_path, 'name': name}
         return self.__client.post(path=path, params=params)
 
     def delete_file(self, file_path):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'delete']
+        path = f'/services/{self.service_id}/gameservers/file_server/delete'
         params = {'path': file_path}
         return self.__client.delete(path=path, params=params)
 
     def list_files(self, dir_path=None, search: str = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'list']
+        path = f'/services/{self.service_id}/gameservers/file_server/list'
         params = {'dir': dir_path, 'search': search}
         return self.__client.get(path=path, params=params)
 
     def move_file(self, source_path: str, target_path: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'move']
+        path = f'/services/{self.service_id}/gameservers/file_server/move'
         name = source_path.split('/')[-1]
         params = {'source_path': source_path, 'target_path': target_path, 'target_file_name': name}
         return self.__client.post(path=path, params=params)
 
     def seek_file(self, file_path: str, offset: int, length: int, mode: str = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'seek']
+        path = f'/services/{self.service_id}/gameservers/file_server/seek'
         params = {'file': file_path, 'offset': offset, 'length': length, 'mode': mode}
         return self.__client.get(path=path, params=params)
 
     def file_size(self, file_path):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'size']
+        path = f'/services/{self.service_id}/gameservers/file_server/size'
         params = {'file': file_path}
         return self.__client.get(path=path, params=params)
 
     def duplicate_file(self, source_path, target_path, target_name):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'copy']
+        path = f'/services/{self.service_id}/gameservers/file_server/copy'
         params = {'source_path': source_path, 'target_path': target_path, 'target_name': target_name}
         return self.__client.post(path=path, params=params)
 
     def files_stat(self, files_paths: list):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'stat']
+        path = f'/services/{self.service_id}/gameservers/file_server/stat'
         params = {'files': files_paths}
         return self.__client.get(path=path, params=params)
 
     def upload_file(self, target_dir: str, file_name: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'file_server', 'upload']
+        path = f'/services/{self.service_id}/gameservers/file_server/upload'
         params = {'path': target_dir, 'file': file_name}
         return self.__client.post(path=path, params=params)
 
     def list_all_games(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['gameserver', 'games']
+        path = '/gameserver/games'
         return self.__client.get(path=path)
 
     def install_game(self, game: str, modpack: str = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'games', 'install']
+        path = f'/services/{self.service_id}/gameservers/games/install'
         params = {'game': game, 'modpack': modpack}
         return self.__client.post(path=path, params=params)
 
     def list_games(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'games']
+        path = f'/services/{self.service_id}/gameservers/games'
         return self.__client.get(path=path)
 
     def start_game(self, game: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'games', 'start']
+        path = f'/services/{self.service_id}/gameservers/games/start'
         params = {'game': game}
         return self.__client.post(path=path, params=params)
 
     def uninstall_game(self, game: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'games', 'uninstall']
+        path = f'/services/{self.service_id}/gameservers/games/uninstall'
         params = {'game': game}
         return self.__client.delete(path=path, params=params)
 
     def change_mysql_password(self, password: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'mysql', 'password']
+        path = f'/services/{self.service_id}/gameservers/mysql/password'
         params = {'password': password}
         return self.__client.post(path=path, params=params)
 
     def reset_mysql_database(self, password: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'mysql', 'reset']
+        path = f'/services/{self.service_id}/gameservers/mysql/reset'
         params = {'password': password}
         return self.__client.post(path=path, params=params)
 
     def install_package(self, package: str, version: str = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'packages']
+        path = f'/services/{self.service_id}/gameservers/packages'
         params = {'package': package, 'version': version}
         return self.__client.post(path=path, params=params)
 
     def list_packages(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'packages']
+        path = f'/services/{self.service_id}/gameservers/packages'
         return self.__client.post(path=path)
 
     def reinstall_package(self, package: str, version: str = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'packages', 'reinstall']
+        path = f'/services/{self.service_id}/gameservers/packages/reinstall'
         params = {'package': package, 'version': version}
         return self.__client.put(path=path, params=params)
 
     def uninstall_package(self, package: str):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'packages', 'uninstall']
+        path = f'/services/{self.service_id}/gameservers/packages/uninstall'
         params = {'package': package}
         return self.__client.delete(path=path, params=params)
 
     def resource_usage(self, hours: int = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'stats']
+        path = f'/services/{self.service_id}/gameservers/stats'
         params = {'hours': hours}
         return self.__client.get(path=path, params=params)
 
     def create_settings_sets(self, name: str = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'settings', 'sets']
+        path = f'/services/{self.service_id}/gameservers/settings/sets'
         params = {'name': name}
         return self.__client.post(path=path, params=params)
 
     def delete_settings_sets(self, set_id: int):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'settings', 'sets', set_id]
+        path = f'/services/{self.service_id}/gameservers/settings/sets/{set_id}'
         return self.__client.delete(path=path)
 
     def settings_sets(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'settings', 'sets']
+        path = f'/services/{self.service_id}/gameservers/settings/sets'
         sets = self.__client.get(path=path)['data']['sets']
         return [data['data'] for data in sets]
 
     def restore_settings_sets(self, set_id: int):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'settings', 'sets', set_id, 'restore']
+        path = f'/services/{self.service_id}/gameservers/settings/sets/{set_id}/restore'
         return self.__client.post(path=path)
 
     def default_settings(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'settings', 'defaults']
+        path = f'/services/{self.service_id}/gameservers/settings/defaults'
         return self.__client.get(path=path)
 
     def reset_settings(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'settings']
+        path = f'/services/{self.service_id}/gameservers/settings'
         return self.__client.delete(path=path)
 
     def update_settings(self, category: str = None, key: str = None, value: str = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'settings']
+        path = f'/services/{self.service_id}/gameservers/settings'
         params = {'category': category, 'key': key, 'value': value}
         return self.__client.post(path=path, params=params)
 
     def boost_history(self, page: int = 0):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'boost', 'history']
+        path = f'/services/{self.service_id}/gameservers/boost/history'
         params = {'page': page}
         return self.__client.get(path=path, params=params)
 
     def boost_settings(self):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'boost']
+        path = f'/services/{self.service_id}/gameservers/boost'
         return self.__client.get(path=path)
 
     def update_boost_settings(self, enable: bool = True, message: str = None, welcome_message: str = None):
-        assert self.__client is not None, "A client must be initialized for GameServer"
-        path = ['services', self.service_id, 'gameservers', 'boost']
+        path = f'/services/{self.service_id}/gameservers/boost'
         params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
         return self.__client.put(path=path, params=params)
 
+    def __contains__(self, item):
+        return item in self.__data
+
+    def __getitem__(self, item):
+        return self.__data[item]
+
+    def keys(self):
+        return self.__data.keys()
+
+    def __iter__(self):
+        return iter(self.__data)
+
     def __repr__(self):
-        return f"<GameServer(service_id={self.service_id}, status='{self.status}', query={self.query})>"
+        service_id = f"service_id={repr(self.service_id)}"
+        location = f"location={repr(self.location)}"
+        slots = f"slots={repr(self.slots)}"
+        game_human = f"game_human={repr(self.game_human)}"
+        ip = f"ip={repr(self.ip)}"
+        params = ", ".join([service_id, location, slots, ip, game_human])
+        return f"<GameServer({params})>"
 
     def __str__(self):
-        return f"""
-        status = '{self.status}'
-        last_status_change = {self.last_status_change}
-        must_be_started = {self.must_be_started}
-        websocket_token = '{self.websocket_token}'
-        hostsystems = {self.hostsystems}
-        username = '{self.username}'
-        user_id = {self.user_id}
-        service_id = {self.service_id}
-        location_id = {self.location_id}
-        minecraft_mode = {self.minecraft_mode}
-        ip = '{self.ip}'
-        ipv6 = {self.ipv6}
-        port = {self.port}
-        query_port = {self.query_port}
-        rcon_port = {self.rcon_port}
-        label = '{self.label}'
-        type = '{self.type}'
-        memory = '{self.memory}'
-        memory_mb = {self.memory_mb}
-        game = '{self.game}'
-        game_human = {self.game_human}
-        game_specific = {self.game_specific}
-        modpacks = {self.modpacks}
-        slots = {self.slots}
-        location = '{self.location}'
-        credentials = {self.credentials}
-        settings = {self.settings}
-        quota = {self.quota}
-        query = {self.query}
-        """
+        return json.dumps(self.__data, indent=3)

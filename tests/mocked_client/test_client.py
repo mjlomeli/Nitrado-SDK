@@ -5,27 +5,27 @@ URL = "https://api.nitrado.net/"
 
 def test_get():
     client = MockedClient(URL)
-    json = client.get('services')
-    assert 'status' in json
-    assert 'data' in json
+    response = client.get('/services')
+    assert 'status' in response.json()
+    assert 'data' in response.json()
 
 
 def test_post():
     client = MockedClient(URL)
-    json = client.get('services')
-    assert 'status' in json
-    assert 'data' in json
+    response = client.get('/services')
+    assert 'status' in response.json()
+    assert 'data' in response.json()
 
 
 def test_delete():
     client = MockedClient(URL)
-    json = client.get('services')
-    assert 'status' in json
-    assert 'data' in json
+    response = client.get('/services')
+    assert 'status' in response.json()
+    assert 'data' in response.json()
 
 
 def test_put():
     client = MockedClient(URL)
-    json = client.get('services')
-    assert 'status' in json
-    assert 'data' in json
+    response = client.get('/services')
+    assert 'status' in response.json()
+    assert 'data' in response.json()

@@ -16,10 +16,11 @@ def get_client():
 
 
 def test_ping():
-    path = 'ping'
+    path = '/ping'
     client = get_client()
     try:
-        json = client.get(path)
+        response = client.get(path)
+        json: dict = response.json()
         error_message = f"The url no longer has access to 'status' and 'message' from api request: {URL}/{path}"
         assert 'status' in json and 'message' in json, error_message
         api_error_message = 'message' in json or f"Nitrado's api is down or the url is invalid: {URL}/{path}"
@@ -29,10 +30,11 @@ def test_ping():
 
 
 def test_maintenance():
-    path = 'maintenance'
+    path = '/maintenance'
     client = get_client()
     try:
-        json = client.get(path)
+        response = client.get(path)
+        json: dict = response.json()
         error_message = f"The url no longer has access to 'status' and 'data' from api request: {URL}/{path}"
         assert 'status' in json and 'data' in json, error_message
         api_error_message = 'message' in json or f"Nitrado's api is down or the url is invalid: {URL}/{path}"
@@ -42,10 +44,11 @@ def test_maintenance():
 
 
 def test_version():
-    path = "version"
+    path = "/version"
     client = get_client()
     try:
-        json = client.get(path)
+        response = client.get(path)
+        json: dict = response.json()
         error_message = f"The url no longer has access to 'status' and 'message' from api request: {URL}/{path}"
         assert 'status' in json and 'message' in json, error_message
         api_error_message = 'message' in json or f"Nitrado's api is down or the url is invalid: {URL}/{path}"

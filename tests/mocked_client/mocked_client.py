@@ -10,15 +10,16 @@ class RequestType(Enum):
     PUT = 4
 
 
-def get_responses_dir():
+def get_responses_dir() -> Path:
     return Path.cwd() / Path('tests/mocked_client/responses/Nitrado')
 
 
 class MockedResponse:
     @staticmethod
     def __get_data(url: str, request_type: RequestType):
-        assert get_responses_dir().exists(), f"Mocked responses directory for Nitrado doesn't exist: {get_responses_dir()}"
-        path_dir = get_responses_dir() / Path(url)
+        home_dir = get_responses_dir()
+        assert home_dir.exists(), f"Mocked responses directory for Nitrado doesn't exist: {get_responses_dir()}"
+        path_dir = home_dir / Path(url[1:])
         assert path_dir.exists(), f"Mocked responses directory for Nitrado doesn't exist: {path_dir}"
         path = path_dir / Path(request_type.name + '.json')
         if not path.exists():
@@ -52,16 +53,16 @@ class MockedRequests:
     def __init__(self):
         pass
 
-    def get(self, path: list or str, headers: dict = None, data=None, params=None):
+    def get(self, path: str, headers: dict = None, data=None, params=None):
         return MockedResponse(path, RequestType.GET)
 
-    def post(self, path: list or str, headers: dict = None, data=None, params=None):
+    def post(self, path: str, headers: dict = None, data=None, params=None):
         return MockedResponse(path, RequestType.GET)
 
-    def put(self, path: list or str, headers: dict = None, data=None, params=None):
+    def put(self, path: str, headers: dict = None, data=None, params=None):
         return MockedResponse(path, RequestType.GET)
 
-    def delete(self, path: list or str, headers: dict = None, data=None, params=None):
+    def delete(self, path: str, headers: dict = None, data=None, params=None):
         return MockedResponse(path, RequestType.GET)
 
     def __repr__(self):
@@ -84,7 +85,7 @@ class MockedClient:
             return ''
 
     def get(self, path: str = None, data: dict = None, params=None):
-        return self.__requests.get(self.__make_path(path)).json()
+        return self.__requests.get(self.__make_path(path))
 
     def post(self, path: str = None, data: dict = None, params=None):
         return self.__requests.post(self.__make_path(path))
