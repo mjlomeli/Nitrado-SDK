@@ -94,7 +94,12 @@ class Service:
         return iter(self.__data)
 
     def __repr__(self):
-        return f"<Service(id={self.id}, username='{self.username}', details={self.details})>"
+        id = f"id={repr(self.id)}"
+        status = f"status={repr(self.status)}"
+        type_human = f"type_human={repr(self.type_human)}"
+        suspend_date = f"suspend_date={repr(self.suspend_date)}"
+        params = ", ".join([id, status, type_human, suspend_date])
+        return f"<Service({params})>"
 
     def __str__(self):
         return json.dumps(self.__data, indent=3)

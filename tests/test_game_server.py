@@ -382,10 +382,8 @@ def test_game_server():
 
 def test_list_backups():
     gameserver = get_a_game_server()
-    backups_json = gameserver.list_backups()
-    assert backups_json
-    assert 'status' in backups_json
-    assert backups_json['status'] == 'success'
+    backups_json = gameserver.backups_list()
+    assert type(backups_json) == dict
 
 
 # TODO: add more test cases

@@ -199,7 +199,7 @@ class GameServer:
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 
-    def gameservers_backups_list(self) -> dict:
+    def backups_list(self) -> dict:
         path = f'/services/{self.service_id}/gameservers/backups'
         response = self.__client.get(path=path)
         data: dict = response.json()['data']
