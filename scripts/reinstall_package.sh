@@ -33,28 +33,28 @@ function get_package_name () {
 }
 
 
-function install_test_package () {
-  # Installs from Test PyPi
+function install_package () {
+  # Installs from PyPi
   # :param $1: The package name.
   # Example:
-  #     install_test_package "package_name"
+  #     install_package "package_name"
+
   if [[ "$OSTYPE" == "linux-gnu" ]] | [[ "$OSTYPE" == "linux-gnu" ]] | [[ "$OSTYPE" == "darwin" ]]
   then
     # POSIX compatibility layer and Linux environment emulation for Windows
-    echo y | python3 -m pip uninstall "$1"
-    python3 -m pip install -i https://test.pypi.org/simple/ "$1"
-    _version=$(pip freeze | grep "$1*")
+    printf "y" | python3 -m pip uninstall "$1"
+    python3 -m pip install "$1"
+    _version=$(pip freeze | grep "$1.*")
     printf "\n\033[32m$_version\033[0m\n"
   elif [[ "$OSTYPE" == "msys" ]]
   then
     # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
-    echo y | python -m pip uninstall "$1"
-    python -m pip install -i https://test.pypi.org/simple/ "$1"
+    printf "y" | python -m pip uninstall "$1"
+    python -m pip install "$1"
     _version=$(pip freeze | grep "$1.*")
     printf "\n\033[32m$_version\033[0m\n"
   else
     printf "Haven't created a command for $OSTYPE"
-    return 1
   fi
 }
 
@@ -68,4 +68,4 @@ fi
 
 _package_name="$(get_package_name $_file)"
 
-install_test_package $_package_name
+install_package $_package_name
