@@ -39,14 +39,6 @@ pip install nitrado
 To begin using the API the Client must first be connected to your Nitrado account.
 Once connected to the client, you should have access to any of the API calls.
 
-```python
-from nitrado import NitradoAPI
-
-NitradoAPI.initialize_client("your-api-key")
-api = NitradoAPI()
-```
-
-**or**
 
 ```python
 from nitrado import NitradoAPI
@@ -62,14 +54,13 @@ from nitrado import NitradoAPI
 
 api = NitradoAPI("your-api-key")
 
-services = api.services
-print(services)
+api.services()
 ```
 ```python
 [
-    <Service(id=1011111, username='ni11111_1', details={'address': '111.111.111.111:9996', 'name': '[API] My-Server-1', 'game': 'ARK: Survival Evolved (Xbox One)', 'portlist_short': 'arkxb', 'folder_short': 'arkxb', 'slots': 70})>,
-    <Service(id=1011112, username='ni11111_1', details={'address': '111.111.111.112:9996', 'name': '[API] My-Server-2', 'game': 'ARK: Survival Evolved (Xbox One)', 'portlist_short': 'arkxb', 'folder_short': 'arkxb', 'slots': 70})>,
-    <Service(id=1011113, username='ni11111_1', details={'address': '111.111.111.113:9996', 'name': '[API] My-Server-3', 'game': 'ARK: Survival Evolved (Xbox One)', 'portlist_short': 'arkxb', 'folder_short': 'arkxb', 'slots': 70})>
+    <Service(id=1011111, status='active', type_human='Publicserver 10 slots', suspend_date='2023-05-07T01:21:11')>,
+    <Service(id=1022222, status='active', type_human='Publicserver 20 slots', suspend_date='2023-07-07T02:11:01')>,
+    <Service(id=1033333, status='active', type_human='Publicserver 30 slots', suspend_date='2023-09-07T06:51:41')>
 ]
 ``` 
 
@@ -81,14 +72,12 @@ from nitrado import NitradoAPI
 
 api = NitradoAPI("your-api-key")
 
-gameserver = api.game_servers
-print(gameserver)
+gameserver = api.game_servers()
 ```
 ```python
 [
-    <GameServer(service_id=11111111, status='started', query={'server_name': '[API] My-Server-1', 'connect_ip': '111.111.111.111:9996', 'map': 'LostIsland', 'version': '943.10', 'player_current': 0, 'player_max': 70, 'players': []})>,
-    <GameServer(service_id=11111112, status='started', query={'server_name': '[API] My-Server-2', 'connect_ip': '111.111.111.112:9996', 'map': 'Ragnarok', 'version': '943.10', 'player_current': 0, 'player_max': 70, 'players': []})>,
-    <GameServer(service_id=11111113, status='started', query={'server_name': '[API] My-Server-3', 'connect_ip': '111.111.111.113:9996', 'map': 'TheIsland', 'version': '943.10', 'player_current': 0, 'player_max': 70, 'players': []})>
+    <GameServer(service_id=11111111, location='US', slots=10, ip='1.2.3.4', game_human='ARK: Survival Evolved (Xbox One)')>,
+    <GameServer(service_id=22222222, location='US', slots=70, ip='11.22.33.44', game_human='ARK: Survival Evolved (Xbox One)')>
 ]
 ```
 
