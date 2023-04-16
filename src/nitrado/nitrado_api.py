@@ -57,17 +57,17 @@ class NitradoAPI:
         data: dict = response.json()['data']
         return Service(self.client, data['services'])
 
-    def health_check(self) -> str:
+    def health_check(self) -> bool:
         response = self.client.get('/ping')
-        data: dict = response.json()['data']
-        return data['message']
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def maintenance_status(self) -> str:
+    def maintenance_status(self) -> dict:
         response = self.client.get('/maintenance')
         data: dict = response.json()['data']
         return data['maintenance']
 
     def version(self) -> str:
         response = self.client.get('/version')
-        data: dict = response.json()['data']
+        data: dict = response.json()
         return data['message']
