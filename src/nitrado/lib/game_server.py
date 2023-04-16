@@ -68,8 +68,8 @@ class GameServer:
         assert_response_is_ok(log_response)
         return log_response.text.replace("\r\n", "\n")
 
-    def logs_shooter_game_last(self) -> str:
-        path = f'/services{self.service_id}/gameservers/file_server/download'
+    def logs_shooter_game_last(self):
+        path = f'/services/{self.service_id}/gameservers/file_server/download'
         params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
         response = self.__client.get(path=path, params=params)
         data: dict = response.json()['data']
