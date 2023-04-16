@@ -35,7 +35,7 @@ class Service:
         data: dict = response.json()['data']
         return data
 
-    def logs(self, page: int = None):
+    def logs(self, page: int = None) -> dict:
         if page:
             return self.log_page(page)['logs']
         data = self.log_page(1)
@@ -47,48 +47,39 @@ class Service:
             current_page_num += 1
         return logs
 
-    def notifications(self):
+    def notifications(self) -> list:
         path = f'/services/{self.id}/notifications'
         response = self.__client.get(path=path)
         data: dict = response.json()['data']
         return data['notifications']
 
-    def tasks(self):
+    def tasks(self) -> list:
         path = f'/services/{self.id}/tasks'
         response = self.__client.get(path=path)
         data: dict = response.json()['data']
         return data['tasks']
 
-    def create_task(self, action_method=None, month="*", day="*", hour="24", minute="0", weekday="*", action_data=None):
+    def create_task(self, action_method=None, month="*", day="*", hour="24", minute="0", weekday="*", action_data=None) -> bool:
         path = f'/services/{self.id}/tasks'
         params = {'action_method': action_method, 'action_data': action_data, 'minute': minute,
                   'hour': hour, 'day': day, 'month': month, 'weekday': weekday}
-        try:
-            self.__client.post(path=path, params=params)
-            return True
-        except Exception as e:
-            print(e)
-            return False
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def update_task(self, task_id=None, action_method=None, month="*", day="*", hour="*", minute="*", weekday="*", action_data=None):
+    def update_task(self, task_id=None, action_method=None, month="*", day="*", hour="*", minute="*", weekday="*", action_data=None) -> bool:
         path = f'/services{self.id}/tasks/task_id'
         params = {'action_method': action_method, 'action_data': action_data, 'minute': minute,
                   'hour': hour, 'day': day, 'month': month, 'weekday': weekday}
-        try:
-            self.__client.put(path=path, params=params)
-            return True
-        except Exception as e:
-            print(e)
-            return False
+        response = self.__client.put(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def delete_task(self, task_id):
+    def delete_task(self, task_id) -> bool:
         path = f'/services/{self.id}/tasks/{task_id}'
-        try:
-            self.__client.delete(path=path)
-            return True
-        except Exception as e:
-            print(e)
-            return False
+        self.__client.delete(path=path)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
     def __contains__(self, item):
         return item in self.__data
