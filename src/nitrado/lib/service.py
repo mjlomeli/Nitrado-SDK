@@ -35,7 +35,7 @@ class Service:
         data: dict = response.json()['data']
         return data
 
-    def logs(self, page: int = None) -> dict:
+    def logs(self, page: int = None) -> list:
         if page:
             return self.log_page(page)['logs']
         data = self.log_page(1)
@@ -77,7 +77,7 @@ class Service:
 
     def delete_task(self, task_id) -> bool:
         path = f'/services/{self.id}/tasks/{task_id}'
-        self.__client.delete(path=path)
+        response = self.__client.delete(path=path)
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 

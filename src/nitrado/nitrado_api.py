@@ -55,7 +55,7 @@ class NitradoAPI:
     def find_service_by_id(self, service_id: str) -> Service:
         response = self.client.get(path=f'/services/{service_id}')
         data: dict = response.json()['data']
-        return Service(self.client, data['services'])
+        return Service(self.client, data['service'])
 
     def health_check(self) -> bool:
         response = self.client.get('/ping')
