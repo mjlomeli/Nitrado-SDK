@@ -30,21 +30,21 @@ class Service:
             self.__dict__[k] = v
 
     def log_page(self, page: int) -> dict:
+        assert page > 0, "Page number must be greater than 0"
         path = f'/services/{self.id}/logs'
         response = self.__client.get(path=path, data={'page': page})
         data: dict = response.json()['data']
         return data
 
-    def logs(self, page: int = None) -> list:
-        if page:
-            return self.log_page(page)['logs']
-        data = self.log_page(1)
-        logs = data['logs']
-        current_page_num = 2
-        while current_page_num <= data['page_count']:
-            data = self.log_page(current_page_num)
-            logs += data['data']['logs']
-            current_page_num += 1
+    def logs(self) -> list:
+        first = self.log_page(1)
+        logs = first['logs']
+        page = 2
+        last_page = first['page_count']
+        while page <= last_page:
+            data = self.log_page(page)
+            logs += data['logs']
+            page += 1
         return logs
 
     def notifications(self) -> list:
