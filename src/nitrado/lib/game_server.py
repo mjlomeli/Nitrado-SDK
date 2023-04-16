@@ -68,7 +68,7 @@ class GameServer:
         assert_response_is_ok(log_response)
         return log_response.text.replace("\r\n", "\n")
 
-    def logs_shooter_game_last(self):
+    def logs_shooter_game_last(self) -> str:
         path = f'/services/{self.service_id}/gameservers/file_server/download'
         params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
         response = self.__client.get(path=path, params=params)
@@ -89,25 +89,40 @@ class GameServer:
         with open(location / Path('restart.txt'), 'w') as w:
             w.write(self.logs_restart())
 
-    def start(self, game):
+    def start(self, game) -> bool:
         path = f'/services/{self.service_id}/gameservers/games/start'
         params = {'game': game}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def backup_restore(self, folder, backup_id):
+    def is_gameserver_restorable(self, folder, backup_id) -> bool:
+        path = f'/services/{self.service_id}/gameservers/backups/restore_possible'
+        params = {'folder': folder, 'backup': backup_id}
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def gameserver_restore(self, folder, backup_id) -> bool:
         path = f'/services/{self.service_id}/gameservers/backups/gameserver'
         params = {'folder': folder, 'backup': backup_id}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def download_file(self, file_path):
+    def download_file(self, file_path) -> dict:
         path = f'/services/{self.service_id}/gameservers/file_server/download'
         params = {'file': file_path}
-        return self.__client.get(path=path, params=params)
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data
 
-    def rename_file(self, file_path, target_path, target_name):
+    def rename_file(self, file_path, target_path, target_name) -> bool:
         path = f'/services/{self.service_id}/gameservers/file_server/move'
         params = {'source_path': file_path, 'target_path': target_path, 'target_filename': target_name}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data:dict = response.json()
+        return response.ok and data['status'] == 'success'
 
     # def rename_file(self, file_path, new_name):
     #     path = f'/services/{self.service_id}/gameservers/file_server/move'
@@ -115,19 +130,25 @@ class GameServer:
     #     params = {'source_path': file_path, 'target_path': target_path, 'target_filename': new_name}
     #     return self._client.post(path=path, params=params)
 
-    def donation_history(self, page=0):
+    def donation_history(self, page=0) -> dict:
         path = f'/services/{self.service_id}/gameservers/boost/history'
         params = {'page': page}
-        return self.__client.get(path=path, params=params)
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data
 
-    def donation_settings(self):
+    def donation_settings(self) -> dict:
         path = f'/services/{self.service_id}/gameservers/boost'
-        return self.__client.get(path=path)['data']
+        response = self.__client.get(path=path)
+        data: dict = response.json()['data']
+        return data['boosting']
 
-    def update_donation_settings(self, enable=True, message=None, welcome_message=None):
+    def update_donation_settings(self, enable=True, message=None, welcome_message=None) -> dict:
         path = f'/services/{self.service_id}/gameservers/boost'
         params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
-        return self.__client.put(path=path, params=params)
+        response = self.__client.put(path=path, params=params)
+        data: dict = response.json()
+        return data['boosting']
 
     def players(self) -> list:
         path = f'/services/{self.service_id}/gameservers/games/players'
@@ -135,16 +156,24 @@ class GameServer:
         data: dict = response.json()['data']
         return data['players']
 
-    def white_list_player(self, gamertag):
+    def white_list_player(self, gamertag) -> bool:
         """
         Player_Management - Add Player to Whitelist
         :param gamertag: Player unique identifier.
         """
         params = {"identifer": gamertag}
         path = f'/services/{self.service_id}/gameservers/games/whitelist'
-        return self.__client.put(path=path, params=params)
+        response = self.__client.put(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def make_admin(self, gamertag):
+    def admin_list(self) -> list:
+        path = f'/services/{self.service_id}/gameservers/games/adminlist'
+        response = self.__client.post(path=path)
+        data: dict = response.json()['data']
+        return data['adminlist']
+
+    def admin_make(self, gamertag):
         """ Must whitelist the player first """
         path = f'/services/{self.service_id}/gameservers/adminlist'
         params = {'identifier': gamertag}
@@ -156,213 +185,281 @@ class GameServer:
         data: dict = response.json()['data']
         return data['gameserver']
 
-    def restart(self, restart_message: str = None, log_message: str = None):
+    def restart(self, restart_message: str = None, log_message: str = None) -> bool:
         path = f'/services/{self.service_id}/gameservers/restart'
         params = {"restart_message": restart_message, "message": log_message}
         response = self.__client.post(path=path, params=params)
-        return response.json()['status'] == 'success'
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def stop(self, message=None, stop_message=None):
-        try:
-            path = f'/services/{self.service_id}/gameservers/stop'
-            params = {'message': message, 'stop_message': stop_message}
-            response = self.__client.post(path=path, params=params)
-            return response.json()['status'] == 'success'
-        except Exception as e:
-            print(e)
-            return False
+    def stop(self, message=None, stop_message=None) -> bool:
+        path = f'/services/{self.service_id}/gameservers/stop'
+        params = {'message': message, 'stop_message': stop_message}
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def list_backups(self) -> dict:
+    def gameservers_backups_list(self) -> dict:
         path = f'/services/{self.service_id}/gameservers/backups'
         response = self.__client.get(path=path)
         data: dict = response.json()['data']
-        return data
+        return data['backups']
 
-    def command(self, command):
+    def command(self, command) -> bool:
         path = f'/services/{self.service_id}/gameservers/app_server/command'
         params = {'command': command}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def ping(self, command):
+    def ping(self, command) -> bool:
         path = f'/services/{self.service_id}/gameservers/app_server'
-        return self.__client.get(path=path, params={'command': command})
+        response = self.__client.get(path=path, params={'command': command})
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def restore_database(self, database: str, timestamp: str):
+    def restore_database(self, database: str, timestamp: str) -> bool:
         path = f'/services/{self.service_id}/gameservers/backups/database'
         params = {'database': database, 'timestamp': timestamp}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def ftp_change_password(self, password: str):
+    def ftp_change_password(self, password: str) -> bool:
         path = f'/services/{self.service_id}/gameservers/ftp/password'
         params = {'password': password}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data:dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def bookmarks(self):
+    def bookmarks(self) -> list:
         path = f'/services/{self.service_id}/gameservers/file_server/bookmarks'
-        return self.__client.get(path=path)
+        response = self.__client.get(path=path)
+        data: dict = response.json()['data']
+        return data['bookmarks']
 
-    def copy_file(self, source_path: str, target_path: str, target_name: str):
+    def file_copy(self, source_path: str, target_path: str, target_name: str) -> bool:
         path = f'/services/{self.service_id}/gameservers/file_server/copy'
         params = {'source_path': source_path, 'target_path': target_path, 'target_name': target_name}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def create_directory(self, dir_path, name):
+    def create_directory(self, dir_path, name) -> bool:
         path = f'/services/{self.service_id}/gameservers/file_server/mkdir'
         params = {'path': dir_path, 'name': name}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def delete_file(self, file_path):
+    def file_delete(self, file_path) -> bool:
         path = f'/services/{self.service_id}/gameservers/file_server/delete'
         params = {'path': file_path}
-        return self.__client.delete(path=path, params=params)
+        response = self.__client.delete(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def list_files(self, dir_path=None, search: str = None):
+    def files_list(self, dir_path=None, search: str = None) -> list:
         path = f'/services/{self.service_id}/gameservers/file_server/list'
         params = {'dir': dir_path, 'search': search}
         response = self.__client.get(path=path, params=params)
         data: dict = response.json()['data']
-        return data
+        return data['entries']
 
-    def move_file(self, source_path: str, target_path: str):
+    def file_move(self, source_path: str, target_path: str) -> bool:
         path = f'/services/{self.service_id}/gameservers/file_server/move'
         name = source_path.split('/')[-1]
         params = {'source_path': source_path, 'target_path': target_path, 'target_file_name': name}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def seek_file(self, file_path: str, offset: int, length: int, mode: str = None):
+    def file_seek(self, file_path: str, offset: int, length: int, mode: str = None) -> dict:
         path = f'/services/{self.service_id}/gameservers/file_server/seek'
         params = {'file': file_path, 'offset': offset, 'length': length, 'mode': mode}
-        return self.__client.get(path=path, params=params)
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data
 
-    def file_size(self, file_path):
+    def file_size(self, file_path) -> int:
         path = f'/services/{self.service_id}/gameservers/file_server/size'
         params = {'file': file_path}
-        return self.__client.get(path=path, params=params)
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data['size']
 
-    def duplicate_file(self, source_path, target_path, target_name):
+    def file_copy(self, source_path, target_path, target_name) -> bool:
         path = f'/services/{self.service_id}/gameservers/file_server/copy'
         params = {'source_path': source_path, 'target_path': target_path, 'target_name': target_name}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def files_stat(self, files_paths: list):
+    def files_stat(self, files_paths: list) -> list:
         path = f'/services/{self.service_id}/gameservers/file_server/stat'
         params = {'files': files_paths}
-        return self.__client.get(path=path, params=params)
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data['entries']
 
-    def upload_file(self, target_dir: str, file_name: str):
+    def file_download(self, file_path) -> dict:
+        path = f'/services/{self.service_id}/gameservers/file_server/download'
+        params = {'file': file_path}
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data
+
+    def file_upload(self, target_dir: str, file_name: str) -> dict:
         path = f'/services/{self.service_id}/gameservers/file_server/upload'
         params = {'path': target_dir, 'file': file_name}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()['data']
+        return data
 
-    def list_all_games(self):
+    def full_game_list(self) -> dict:
         path = '/gameserver/games'
         response = self.__client.get(path=path)
         data: dict = response.json()['data']
-        return data
+        return data['games']
 
-    def install_game(self, game: str, modpack: str = None):
+    def install_game(self, game: str, modpack: str = None) -> bool:
         path = f'/services/{self.service_id}/gameservers/games/install'
         params = {'game': game, 'modpack': modpack}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
-    def list_games(self):
+    def list_games(self) -> list:
         path = f'/services/{self.service_id}/gameservers/games'
+        response = self.__client.get(path=path)
+        data: dict = response.json()['data']
+        return data['games']
+
+    def start_game(self, game: str) -> bool:
+        path = f'/services/{self.service_id}/gameservers/games/start'
+        params = {'game': game}
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def uninstall_game(self, game: str) -> bool:
+        path = f'/services/{self.service_id}/gameservers/games/uninstall'
+        params = {'game': game}
+        response = self.__client.delete(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def change_mysql_password(self, password: str) -> bool:
+        path = f'/services/{self.service_id}/gameservers/mysql/password'
+        params = {'password': password}
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def reset_mysql_database(self, password: str) -> bool:
+        path = f'/services/{self.service_id}/gameservers/mysql/reset'
+        params = {'password': password}
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def package_install(self, package: str, version: str = None) -> dict:
+        path = f'/services/{self.service_id}/gameservers/packages/install'
+        params = {'package': package, 'version': version}
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return data
+
+    def packages_list(self) -> dict:
+        path = f'/services/{self.service_id}/gameservers/packages'
+        response = self.__client.get(path=path)
+        data: dict = response.json()
+        return data['packages']
+
+    def package_reinstall(self, package: str, version: str = None) -> dict:
+        path = f'/services/{self.service_id}/gameservers/packages/reinstall'
+        params = {'package': package, 'version': version}
+        response = self.__client.put(path=path, params=params)
+        data: dict = response.json()
+        return data
+
+    def package_uninstall(self, package: str) -> dict:
+        path = f'/services/{self.service_id}/gameservers/packages/uninstall'
+        params = {'package': package}
+        response = self.__client.delete(path=path, params=params)
+        data: dict = response.json()
+        return data
+
+    def resource_usage(self, hours: int = None) -> dict:
+        path = f'/services/{self.service_id}/gameservers/stats'
+        params = {'hours': hours}
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data['stats']
+
+    def settings_sets_create(self, name: str = None) -> bool:
+        path = f'/services/{self.service_id}/gameservers/settings/sets'
+        params = {'name': name}
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def settings_sets_delete(self, set_id: int) -> bool:
+        path = f'/services/{self.service_id}/gameservers/settings/sets/{set_id}'
+        response = self.__client.delete(path=path)
+        data: dict = response.json()
+        return response.ok and data['success'] == 'success'
+
+    def settings_sets(self) -> list:
+        path = f'/services/{self.service_id}/gameservers/settings/sets'
+        response = self.__client.get(path=path)
+        data:dict = response.json()['data']
+        return data['sets']
+
+    def settings_sets_restore(self, set_id: int) -> bool:
+        path = f'/services/{self.service_id}/gameservers/settings/sets/{set_id}/restore'
+        response = self.__client.post(path=path)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def default_settings(self) -> dict:
+        path = f'/services/{self.service_id}/gameservers/settings/defaults'
         response = self.__client.get(path=path)
         data: dict = response.json()['data']
         return data
 
-    def start_game(self, game: str):
-        path = f'/services/{self.service_id}/gameservers/games/start'
-        params = {'game': game}
-        return self.__client.post(path=path, params=params)
-
-    def uninstall_game(self, game: str):
-        path = f'/services/{self.service_id}/gameservers/games/uninstall'
-        params = {'game': game}
-        return self.__client.delete(path=path, params=params)
-
-    def change_mysql_password(self, password: str):
-        path = f'/services/{self.service_id}/gameservers/mysql/password'
-        params = {'password': password}
-        return self.__client.post(path=path, params=params)
-
-    def reset_mysql_database(self, password: str):
-        path = f'/services/{self.service_id}/gameservers/mysql/reset'
-        params = {'password': password}
-        return self.__client.post(path=path, params=params)
-
-    def install_package(self, package: str, version: str = None):
-        path = f'/services/{self.service_id}/gameservers/packages'
-        params = {'package': package, 'version': version}
-        return self.__client.post(path=path, params=params)
-
-    def list_packages(self):
-        path = f'/services/{self.service_id}/gameservers/packages'
-        return self.__client.get(path=path)
-
-    def reinstall_package(self, package: str, version: str = None):
-        path = f'/services/{self.service_id}/gameservers/packages/reinstall'
-        params = {'package': package, 'version': version}
-        return self.__client.put(path=path, params=params)
-
-    def uninstall_package(self, package: str):
-        path = f'/services/{self.service_id}/gameservers/packages/uninstall'
-        params = {'package': package}
-        return self.__client.delete(path=path, params=params)
-
-    def resource_usage(self, hours: int = None):
-        path = f'/services/{self.service_id}/gameservers/stats'
-        params = {'hours': hours}
-        return self.__client.get(path=path, params=params)
-
-    def create_settings_sets(self, name: str = None):
-        path = f'/services/{self.service_id}/gameservers/settings/sets'
-        params = {'name': name}
-        return self.__client.post(path=path, params=params)
-
-    def delete_settings_sets(self, set_id: int):
-        path = f'/services/{self.service_id}/gameservers/settings/sets/{set_id}'
-        return self.__client.delete(path=path)
-
-    def settings_sets(self):
-        path = f'/services/{self.service_id}/gameservers/settings/sets'
-        sets = self.__client.get(path=path)['data']['sets']
-        return [data['data'] for data in sets]
-
-    def restore_settings_sets(self, set_id: int):
-        path = f'/services/{self.service_id}/gameservers/settings/sets/{set_id}/restore'
-        return self.__client.post(path=path)
-
-    def default_settings(self):
-        path = f'/services/{self.service_id}/gameservers/settings/defaults'
-        return self.__client.get(path=path)
-
-    def reset_settings(self):
+    def reset_settings(self) -> bool:
         path = f'/services/{self.service_id}/gameservers/settings'
-        return self.__client.delete(path=path)
+        response = self.__client.delete(path=path)
+        data: dict = response.json()
+        return response.ok and data['status'] == "success"
 
-    def update_settings(self, category: str = None, key: str = None, value: str = None):
+    def update_settings(self, category: str = None, key: str = None, value: str = None) -> dict:
         path = f'/services/{self.service_id}/gameservers/settings'
         params = {'category': category, 'key': key, 'value': value}
-        return self.__client.post(path=path, params=params)
+        response = self.__client.post(path=path, params=params)
+        data: dict = response.json()['data']
+        return data['settings']
 
-    def boost_history(self, page: int = 1):
+    def boost_history(self, page: int = 1) -> dict:
         path = f'/services/{self.service_id}/gameservers/boost/history'
         params = {'page': page}
         response = self.__client.get(path=path, params=params)
         data: dict = response.json()['data']
         return data
 
-    def boost_settings(self):
+    def boost_settings(self) -> dict:
         path = f'/services/{self.service_id}/gameservers/boost'
         response = self.__client.get(path=path)
-        data: dict = response.json()['data']
-        return data
+        data: dict = response.json()
+        return data['boosting']
 
-    def update_boost_settings(self, enable: bool = True, message: str = None, welcome_message: str = None):
+    def boost_settings_update(self, enable: bool = True, message: str = None, welcome_message: str = None) -> dict:
         path = f'/services/{self.service_id}/gameservers/boost'
         params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
-        return self.__client.put(path=path, params=params)
+        response = self.__client.put(path=path, params=params)
+        data: dict = response.json()
+        return data['boosting']
 
     def __contains__(self, item):
         return item in self.__data
