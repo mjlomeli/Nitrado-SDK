@@ -129,7 +129,7 @@ class GameServer:
         params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
         return self.__client.put(path=path, params=params)
 
-    def players(self):
+    def players(self) -> list:
         path = f'/services/{self.service_id}/gameservers/games/players'
         response = self.__client.get(path=path)
         data: dict = response.json()['data']
@@ -150,7 +150,7 @@ class GameServer:
         params = {'identifier': gamertag}
         return self.__client.post(path=path, params=params)
 
-    def details(self):
+    def details(self) -> dict:
         path = f'/services/{self.service_id}/gameservers'
         response = self.__client.get(path=path)
         data: dict = response.json()['data']
@@ -172,10 +172,11 @@ class GameServer:
             print(e)
             return False
 
-    def list_backups(self):
+    def list_backups(self) -> dict:
         path = f'/services/{self.service_id}/gameservers/backups'
         response = self.__client.get(path=path)
-        return response.json()
+        data: dict = response.json()['data']
+        return data
 
     def command(self, command):
         path = f'/services/{self.service_id}/gameservers/app_server/command'
@@ -218,7 +219,9 @@ class GameServer:
     def list_files(self, dir_path=None, search: str = None):
         path = f'/services/{self.service_id}/gameservers/file_server/list'
         params = {'dir': dir_path, 'search': search}
-        return self.__client.get(path=path, params=params)
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data
 
     def move_file(self, source_path: str, target_path: str):
         path = f'/services/{self.service_id}/gameservers/file_server/move'
@@ -253,7 +256,9 @@ class GameServer:
 
     def list_all_games(self):
         path = '/gameserver/games'
-        return self.__client.get(path=path)
+        response = self.__client.get(path=path)
+        data: dict = response.json()['data']
+        return data
 
     def install_game(self, game: str, modpack: str = None):
         path = f'/services/{self.service_id}/gameservers/games/install'
@@ -262,7 +267,9 @@ class GameServer:
 
     def list_games(self):
         path = f'/services/{self.service_id}/gameservers/games'
-        return self.__client.get(path=path)
+        response = self.__client.get(path=path)
+        data: dict = response.json()['data']
+        return data
 
     def start_game(self, game: str):
         path = f'/services/{self.service_id}/gameservers/games/start'
@@ -291,7 +298,7 @@ class GameServer:
 
     def list_packages(self):
         path = f'/services/{self.service_id}/gameservers/packages'
-        return self.__client.post(path=path)
+        return self.__client.get(path=path)
 
     def reinstall_package(self, package: str, version: str = None):
         path = f'/services/{self.service_id}/gameservers/packages/reinstall'
@@ -339,14 +346,18 @@ class GameServer:
         params = {'category': category, 'key': key, 'value': value}
         return self.__client.post(path=path, params=params)
 
-    def boost_history(self, page: int = 0):
+    def boost_history(self, page: int = 1):
         path = f'/services/{self.service_id}/gameservers/boost/history'
         params = {'page': page}
-        return self.__client.get(path=path, params=params)
+        response = self.__client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data
 
     def boost_settings(self):
         path = f'/services/{self.service_id}/gameservers/boost'
-        return self.__client.get(path=path)
+        response = self.__client.get(path=path)
+        data: dict = response.json()['data']
+        return data
 
     def update_boost_settings(self, enable: bool = True, message: str = None, welcome_message: str = None):
         path = f'/services/{self.service_id}/gameservers/boost'
