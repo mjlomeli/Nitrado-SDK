@@ -55,6 +55,7 @@ class GameServer:
         return data['clusterid']
 
     def logs_shooter_game(self) -> str:
+        """ Refreshes about every 15+/- minutes """
         path = f'/services/{self.service_id}/gameservers/file_server/download'
         params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log"}
         response = self.__client.get(path=path, params=params)
@@ -65,6 +66,7 @@ class GameServer:
         return log_response.text.replace("\r\n", "\n")
 
     def logs_restart(self) -> str:
+        """ Refreshes about every 15+/- minutes """
         path = f'/services/{self.service_id}/gameservers/file_server/download'
         params = {'file': f"/games/{self.username}/ftproot/restart.log"}
         response = self.__client.get(path=path, params=params)
@@ -75,6 +77,7 @@ class GameServer:
         return log_response.text.replace("\r\n", "\n")
 
     def logs_shooter_game_last(self) -> str:
+        """ Refreshes about every 15+/- minutes """
         path = f'/services/{self.service_id}/gameservers/file_server/download'
         params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
         response = self.__client.get(path=path, params=params)

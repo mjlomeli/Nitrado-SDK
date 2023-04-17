@@ -40,12 +40,15 @@ class ArkSurvival:
         return self.__gameserver
 
     def log_shooter_game(self) -> str:
+        """ Refreshes about every 15+/- minutes """
         return self.__gameserver.logs_shooter_game()
 
     def log_shooter_game_last(self) -> str:
+        """ Refreshes about every 15+/- minutes """
         return self.__gameserver.logs_shooter_game_last()
 
     def log_restart(self) -> str:
+        """ Refreshes about every 15+/- minutes """
         return self.__gameserver.logs_restart()
 
     def config(self) -> dict:
