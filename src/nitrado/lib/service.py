@@ -68,7 +68,7 @@ class Service:
         return response.ok and data['status'] == 'success'
 
     def update_task(self, task_id=None, action_method=None, month="*", day="*", hour="*", minute="*", weekday="*", action_data=None) -> bool:
-        path = f'/services{self.id}/tasks/task_id'
+        path = f'/services{self.id}/tasks/{task_id}'
         params = {'action_method': action_method, 'action_data': action_data, 'minute': minute,
                   'hour': hour, 'day': day, 'month': month, 'weekday': weekday}
         response = self.__client.put(path=path, params=params)

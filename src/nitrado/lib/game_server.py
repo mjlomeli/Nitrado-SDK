@@ -1,4 +1,5 @@
 from nitrado.lib.errors import assert_response_is_ok
+from nitrado.lib.service import Service
 from nitrado.tools import Client
 import requests
 from pathlib import Path
@@ -41,6 +42,11 @@ class GameServer:
         self.query = None
         for k, v in data.items():
             self.__dict__[k] = v
+
+    def service(self) -> Service:
+        response = self.__client.get(path=f'/services/{self.service_id}')
+        data: dict = response.json()['data']
+        return Service(self.__client, data['service'])
 
     def cluster_id(self) -> str:
         path = f'/services/{self.service_id}/gameservers/games/arkse/gen_cluster_id'
@@ -89,7 +95,8 @@ class GameServer:
         with open(location / Path('restart.txt'), 'w') as w:
             w.write(self.logs_restart())
 
-    def start(self, game) -> bool:
+    def start(self, game: str) -> bool:
+        """ :param game: Provide the Folder Short of the specific game. """
         path = f'/services/{self.service_id}/gameservers/games/start'
         params = {'game': game}
         response = self.__client.post(path=path, params=params)
@@ -156,7 +163,7 @@ class GameServer:
         data: dict = response.json()['data']
         return data['players']
 
-    def white_list_player(self, gamertag) -> bool:
+    def white_list_player(self, gamertag: str) -> bool:
         """
         Player_Management - Add Player to Whitelist
         :param gamertag: Player unique identifier.
