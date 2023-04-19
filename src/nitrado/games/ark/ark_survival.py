@@ -2,7 +2,7 @@ from nitrado.lib.game_server import GameServer
 from nitrado.lib.service import Service
 
 
-class ArkSurvival:
+class ArkSurvivalServer:
     def __init__(self, gameserver: GameServer):
         self.__service = None
         self.__gameserver = gameserver
@@ -90,6 +90,18 @@ class ArkSurvival:
     def backups_list(self) -> dict:
         return self.__gameserver.backups_list()
 
+    def admin_password(self) -> str:
+        return self.config()['admin-password']
+
+    def server_password(self) -> str:
+        return self.config()['server-password']
+
+    def spectator_password(self) -> str:
+        return self.config()['SpectatorPassword']
+
+    def current_admin_password(self) -> str:
+        return self.config()['current-admin-password']
+
     def __repr__(self):
         service_id = f"service_id={repr(self.service_id)}"
         server_name = f"server_name={repr(self.server_name())}"
@@ -97,3 +109,5 @@ class ArkSurvival:
         status = f"status={repr(self.status)}"
         params = ", ".join([service_id, server_name, player_current, status])
         return f"<ArkSurvival({params})>"
+
+

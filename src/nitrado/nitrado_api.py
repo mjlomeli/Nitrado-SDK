@@ -1,7 +1,7 @@
 from nitrado.lib.errors import assert_response_is_ok, assert_response_is_json
 from nitrado.tools import Client
 from nitrado.lib import GameServer, Service
-from nitrado.games.ark_survival import ArkSurvival
+from nitrado.games.ark import ArkSurvivalServer
 import requests
 import os
 
@@ -48,11 +48,11 @@ class NitradoAPI:
             game_servers.append(game_server)
         return game_servers
 
-    def ark_xbox_servers(self) -> list[ArkSurvival]:
+    def ark_xbox_servers(self) -> list[ArkSurvivalServer]:
         games = []
         for game in self.game_servers():
             if game.game == 'arkxb':
-                games.append(ArkSurvival(game))
+                games.append(ArkSurvivalServer(game))
         return games
 
     def find_game_by_service_id(self, service_id: str) -> GameServer:
