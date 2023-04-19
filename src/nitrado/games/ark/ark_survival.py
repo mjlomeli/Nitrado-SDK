@@ -5,7 +5,7 @@ from nitrado.lib.service import Service
 class ArkSurvivalServer:
     def __init__(self, gameserver: GameServer):
         self.__service = None
-        self.__gameserver = gameserver
+        self.gameserver = gameserver
 
         self.status = gameserver.status
         self.game_name = gameserver.game_human
@@ -26,69 +26,66 @@ class ArkSurvivalServer:
         return self.query['player_current']
 
     def players(self) -> list:
-        return self.query['players']
+        return self.gameserver.players()
 
     def server_name(self) -> str:
         return self.config()['server-name']
 
     def service(self) -> Service:
         if self.__service is None:
-            self.__service = self.__gameserver.service()
+            self.__service = self.gameserver.service()
         return self.__service
-
-    def gameserver(self) -> GameServer:
-        return self.__gameserver
 
     def log_shooter_game(self) -> str:
         """ Refreshes about every 15+/- minutes """
-        return self.__gameserver.logs_shooter_game()
+        return self.gameserver.logs_shooter_game()
 
     def log_shooter_game_last(self) -> str:
         """ Refreshes about every 15+/- minutes """
-        return self.__gameserver.logs_shooter_game_last()
+        return self.gameserver.logs_shooter_game_last()
 
     def log_restart(self) -> str:
         """ Refreshes about every 15+/- minutes """
-        return self.__gameserver.logs_restart()
+        return self.gameserver.logs_restart()
 
     def config(self) -> dict:
-        return self.__gameserver.settings['config']
+        return self.gameserver.settings['config']
 
     def ini(self) -> dict:
-        return self.__gameserver.settings['gameini']
+        return self.gameserver.settings['gameini']
 
     def general_settings(self) -> dict:
-        return self.__gameserver.settings['general']
+        return self.gameserver.settings['general']
 
     def start_param(self) -> dict:
-        return self.__gameserver.settings['start-param']
+        return self.gameserver.settings['start-param']
 
     def cluster_id(self) -> str:
-        return self.__gameserver.cluster_id()
+        return self.gameserver.cluster_id()
 
     def start_server(self) -> bool:
-        return self.__gameserver.start('arkxb')
+        return self.gameserver.start('arkxb')
 
     def restart_server(self, restart_message: str = None, log_message: str = None) -> bool:
-        return self.__gameserver.restart(restart_message=restart_message, log_message=log_message)
+        return self.gameserver.restart(restart_message=restart_message, log_message=log_message)
 
     def reinstall_server(self) -> bool:
-        return self.__gameserver.install_game('arkxb', modpack=None)
+        return self.gameserver.install_game('arkxb', modpack=None)
 
     def stop_server(self, message: str = None, stop_message: str = None) -> bool:
-        return self.__gameserver.stop(message=message, stop_message=stop_message)
+        return self.gameserver.stop(message=message, stop_message=stop_message)
 
     def uninstall_game(self) -> bool:
-        return self.__gameserver.uninstall_game('arkxb')
+        return self.gameserver.uninstall_game('arkxb')
 
     def white_list_player(self, gamertag: str) -> bool:
-        return self.__gameserver.white_list_player(gamertag)
+        return self.gameserver.white_list_player(gamertag)
 
     def admin_list(self) -> list:
-        return self.__gameserver.admin_list()
+        return self.gameserver.admin_list()
 
     def backups_list(self) -> dict:
-        return self.__gameserver.backups_list()
+        return self.gameserver.backups_list()
 
     def admin_password(self) -> str:
         return self.config()['admin-password']
