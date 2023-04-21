@@ -6,10 +6,12 @@
 A Python based SDK for the [Nitrado RESTful API](https://doc.nitrado.net/) published at [PyPI](https://pypi.org/project/nitrado/).
 
 # Installation
+In your terminal install the nitrado package with pip.
 
 ```shell
 pip install nitrado
 ```
+
 
 # Overview
 
@@ -26,15 +28,6 @@ and create an API key.
    > Data provided outside of the game server. Like server status, user id, and auto extension plan.
 #### 4. [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
    > Data directly related to the game server. This includes the player list, game settings, etc.
-
-<br />
-
-# Installation
-In your terminal install the nitrado package with pip.
-
-```shell
-pip install nitrado
-```
 
 <br />
 
