@@ -5,6 +5,11 @@
 
 A Python based SDK for the [Nitrado RESTful API](https://doc.nitrado.net/) published at [PyPI](https://pypi.org/project/nitrado/).
 
+# Installation
+
+```shell
+pip install nitrado
+```
 
 # Overview
 
