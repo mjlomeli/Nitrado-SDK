@@ -54,7 +54,8 @@ from nitrado import NitradoAPI
 
 api = NitradoAPI("your-api-key")
 
-api.services()
+services = api.services()
+print(services)
 ```
 ```python
 [
@@ -72,7 +73,8 @@ from nitrado import NitradoAPI
 
 api = NitradoAPI("your-api-key")
 
-gameserver = api.game_servers()
+gameservers = api.game_servers()
+print(gameservers)
 ```
 ```python
 [
