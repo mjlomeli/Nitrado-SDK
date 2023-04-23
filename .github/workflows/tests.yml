@@ -24,4 +24,4 @@ jobs:
       - name: Test with tox
         run: tox
         env:
-          NITRADO_KEY: ${{ secrets.NITRADO_API_KEY }}
+          NITRADO_API_KEY: ${{ secrets.NITRADO_API_KEY }}
