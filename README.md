@@ -64,7 +64,7 @@ This example highlights how to get the service.
 ```python
 from nitrado import Service
 
-services = Services.all()
+services = Service.all()
 print(services)
 ```
 ```python
