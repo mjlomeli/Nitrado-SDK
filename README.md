@@ -28,6 +28,8 @@ and create an API key.
    > Data provided outside of the game server. Like server status, user id, and auto extension plan.
 #### 4. [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
    > Data directly related to the game server. This includes the player list, game settings, etc.
+#### 5. [Games](https://github.com/mjlomeli/NitradoAPI/wiki/Games)
+   > Custom game specific libraries.
 
 <br />
 
