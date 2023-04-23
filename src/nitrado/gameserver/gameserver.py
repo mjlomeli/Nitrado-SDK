@@ -4,6 +4,7 @@ from ..service.service import Service
 from .host_systems import HostSystem
 from .operating_system import OperatingSystem
 from .credentials import Credentials
+from .players import Players
 
 
 class GameServer:
@@ -98,11 +99,11 @@ class GameServer:
         for k, v in kwargs.items():
             self.__dict__[k] = v
 
-    def players(self) -> list:
+    def players(self) -> list[Players]:
         path = f'/services/{self.service_id}/gameservers/games/players'
         response = Client.get(path=path)
         data: dict = response.json()['data']
-        return data['players']
+        return [Players(self.service_id, **player) for player in data['players']]
 
     def is_gameserver_restorable(self, folder, backup_id) -> bool:
         path = f'/services/{self.service_id}/gameservers/backups/restore_possible'
@@ -123,23 +124,27 @@ class GameServer:
         Player_Management - Add Player to Whitelist
         :param gamertag: Player unique identifier.
         """
-        params = {"identifer": gamertag}
+        params = {"identifier": gamertag}
         path = f'/services/{self.service_id}/gameservers/games/whitelist'
-        response = Client.put(path=path, params=params)
+        response = Client.post(path=path, params=params)
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 
     def admin_list(self) -> list:
         path = f'/services/{self.service_id}/gameservers/games/adminlist'
-        response = Client.post(path=path)
+        response = Client.get(path=path)
         data: dict = response.json()['data']
         return data['adminlist']
 
-    def admin_make(self, gamertag):
+    def make_admin(self, gamertag: str) -> bool:
         """ Must whitelist the player first """
-        path = f'/services/{self.service_id}/gameservers/adminlist'
+        if not self.white_list_player(gamertag):
+            return False
+        path = f'/services/{self.service_id}/gameservers/games/adminlist'
         params = {'identifier': gamertag}
-        return Client.post(path=path, params=params)
+        response = Client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
     def details(self) -> dict:
         path = f'/services/{self.service_id}/gameservers'
@@ -160,26 +165,6 @@ class GameServer:
         response = Client.post(path=path, params=params)
         data:dict = response.json()
         return response.ok and data['status'] == 'success'
-
-    def donation_history(self, page=0) -> dict:
-        path = f'/services/{self.service_id}/gameservers/boost/history'
-        params = {'page': page}
-        response = Client.get(path=path, params=params)
-        data: dict = response.json()['data']
-        return data
-
-    def donation_settings(self) -> dict:
-        path = f'/services/{self.service_id}/gameservers/boost'
-        response = Client.get(path=path)
-        data: dict = response.json()['data']
-        return data['boosting']
-
-    def update_donation_settings(self, enable=True, message=None, welcome_message=None) -> dict:
-        path = f'/services/{self.service_id}/gameservers/boost'
-        params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
-        response = Client.put(path=path, params=params)
-        data: dict = response.json()
-        return data['boosting']
 
     def start_game(self, game: str) -> bool:
         path = f'/services/{self.service_id}/gameservers/games/start'
@@ -409,7 +394,7 @@ class GameServer:
         path = f'/services/{self.service_id}/gameservers/settings/defaults'
         response = Client.get(path=path)
         data: dict = response.json()['data']
-        return data
+        return data['settings']
 
     def reset_settings(self) -> bool:
         path = f'/services/{self.service_id}/gameservers/settings'
@@ -434,14 +419,14 @@ class GameServer:
     def boost_settings(self) -> dict:
         path = f'/services/{self.service_id}/gameservers/boost'
         response = Client.get(path=path)
-        data: dict = response.json()
+        data: dict = response.json()['data']
         return data['boosting']
 
     def boost_settings_update(self, enable: bool = True, message: str = None, welcome_message: str = None) -> dict:
         path = f'/services/{self.service_id}/gameservers/boost'
         params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
         response = Client.put(path=path, params=params)
-        data: dict = response.json()
+        data: dict = response.json()['data']
         return data['boosting']
 
     def __getitem__(self, item):

@@ -144,15 +144,6 @@ class ArkSurvival(GameServer):
     def uninstall(self) -> bool:
         return self.uninstall_game('arkxb')
 
-    def white_list_player(self, gamertag: str) -> bool:
-        return self.white_list_player(gamertag)
-
-    def admin_list(self) -> list:
-        return self.admin_list()
-
-    def backups_list(self) -> dict:
-        return self.backups_list()
-
     def __repr__(self):
         service_id = f"service_id={repr(self.service_id)}"
         server_name = f"server_name={repr(self.settings.config.server_name)}"

@@ -8,7 +8,7 @@ load_dotenv()
 
 class Client:
     ENV_NAME = "NITRADO_API_KEY"
-    NITRADO_API_URL = "https://api.nitrado.net/"
+    NITRADO_API_URL = "https://api.nitrado.net"
 
     @classmethod
     def initialize(cls, api_key: str):
@@ -43,25 +43,25 @@ class Client:
         return "{}{}".format(cls.NITRADO_API_URL, path)
 
     @classmethod
-    def get(cls, path: str = None, data: dict = None, params=None) -> Response:
-        response = get(cls.make_path(path), headers=cls.headers(), data=data, params=params)
+    def get(cls, path: str = None, params=None, **kwargs) -> Response:
+        response = get(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
         assert_success(response)
         return response
 
     @classmethod
-    def post(cls, path: str = None, data: dict = None, params=None) -> Response:
-        response = post(cls.make_path(path), headers=cls.headers(), data=data, params=params)
+    def post(cls, path: str = None, params=None, **kwargs) -> Response:
+        response = post(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
         assert_success(response)
         return response
 
     @classmethod
-    def delete(cls, path: str = None, data: dict = None, params=None) -> Response:
-        response = delete(cls.make_path(path), headers=cls.headers(), data=data, params=params)
+    def delete(cls, path: str = None, params=None, **kwargs) -> Response:
+        response = delete(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
         assert_success(response)
         return response
 
     @classmethod
-    def put(cls, path: str = None, data: dict = None, params=None) -> Response:
-        response = put(cls.make_path(path), headers=cls.headers(), data=data, params=params)
+    def put(cls, path: str = None, params=None, **kwargs) -> Response:
+        response = put(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
         assert_success(response)
         return response
