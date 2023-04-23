@@ -9,7 +9,7 @@ from ...lib.errors import assert_response_is_json
 import requests
 
 
-class ArkSurvival(GameServer):
+class ArkSurvival:
     @classmethod
     def unofficial_server_list(cls) -> dict:
         response = requests.get("http://arkdedicated.com/xbox/cache/unofficialserverlist.json")
@@ -37,7 +37,7 @@ class ArkSurvival(GameServer):
         data['query'] = Query(service_id, **data['query'])
         data['settings'] = Settings.from_data(service_id, **data['settings'])
         data['game_specific'] = GameSpecific.from_data(service_id, **data['game_specific'])
-        return ArkSurvival(**data)
+        return ArkSurvival(gameserver, **data)
 
     @classmethod
     def all(cls) -> list[ArkSurvival]:
@@ -47,20 +47,26 @@ class ArkSurvival(GameServer):
             data['query'] = Query(gameserver.service_id, **data['query'])
             data['settings'] = Settings.from_data(gameserver.service_id, **data['settings'])
             data['game_specific'] = GameSpecific.from_data(gameserver.service_id, **data['game_specific'])
-            gameservers.append(ArkSurvival(**data))
+            gameservers.append(ArkSurvival(gameserver, **data))
         return gameservers
 
     def __init__(
             self,
+            gameserver: GameServer,
             query: Query = None,
             settings: Settings = None,
             game_specific: GameSpecific = None,
             **kwargs
     ):
-        super().__init__(**kwargs)
         self.query = query
         self.settings = settings
         self.game_specific = game_specific
+        self.service_id = gameserver.service_id
+        self.username = gameserver.username
+        self.status = gameserver.status
+        self.__gameserver = gameserver
+        for k, v in kwargs.items():
+            self.__dict__[k] = v
 
     @property
     def map(self) -> str:
@@ -130,19 +136,19 @@ class ArkSurvival(GameServer):
         return data['clusterid']
 
     def start(self) -> bool:
-        return self.start_game('arkxb')
+        return self.__gameserver.start_game('arkxb')
 
     def restart(self, restart_message: str = None, log_message: str = None) -> bool:
-        return self.restart_game(restart_message=restart_message, log_message=log_message)
+        return self.__gameserver.restart_game(restart_message=restart_message, log_message=log_message)
 
     def reinstall(self) -> bool:
-        return self.install_game('arkxb', modpack=None)
+        return self.__gameserver.install_game('arkxb', modpack=None)
 
     def stop(self, message: str = None, stop_message: str = None) -> bool:
-        return self.stop_game(message=message, stop_message=stop_message)
+        return self.__gameserver.stop_game(message=message, stop_message=stop_message)
 
     def uninstall(self) -> bool:
-        return self.uninstall_game('arkxb')
+        return self.__gameserver.uninstall_game('arkxb')
 
     def __repr__(self):
         service_id = f"service_id={repr(self.service_id)}"
@@ -150,6 +156,6 @@ class ArkSurvival(GameServer):
         player_current = f"player_current={repr(self.player_current)}"
         status = f"status={repr(self.status)}"
         params = ", ".join([service_id, server_name, player_current, status])
-        return f"<ArkSurvival({params})>"
+        return f"<ArkSurvival({params}, ...)>"
 
 
