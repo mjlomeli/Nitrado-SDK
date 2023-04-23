@@ -5,7 +5,7 @@ from .locations import Location
 class Game:
     @classmethod
     def from_data(cls, **kwargs) -> list[Game]:
-        #steam_id = kwargs['steam_id']
+        steam_id = kwargs['steam_id']  # Not sure what this is for yet
         locations = {loc['id']: loc for loc in kwargs['locations']}
         games = []
         for game in kwargs['games']:
