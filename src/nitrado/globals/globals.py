@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ..lib import Client
 from .maintenance import Maintenance
+from .game import Game
 
 
 class Global:
@@ -17,17 +18,17 @@ class Global:
         return Maintenance(**kwargs['data']['maintenance'])
 
     @classmethod
-    def version(cls) -> Global:
+    def version(cls) -> str:
         response = Client.get('/version')
         kwargs: dict = response.json()
-        return cls(**kwargs)
+        return cls(**kwargs).message
 
     @classmethod
-    def full_game_list(cls) -> dict:
+    def full_game_list(cls) -> list[Game]:
         path = '/gameserver/games'
         response = Client.get(path=path)
         data: dict = response.json()['data']
-        return data['games']
+        return Game.from_data(**data['games'])
 
     def __init__(self, data: dict = None, message: str = None, status: str = None):
         self.success = status == 'success'
