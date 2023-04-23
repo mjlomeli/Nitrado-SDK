@@ -22,6 +22,13 @@ class Global:
         kwargs: dict = response.json()
         return cls(**kwargs)
 
+    @classmethod
+    def full_game_list(cls) -> dict:
+        path = '/gameserver/games'
+        response = Client.get(path=path)
+        data: dict = response.json()['data']
+        return data['games']
+
     def __init__(self, data: dict = None, message: str = None, status: str = None):
         self.success = status == 'success'
         self.data = data

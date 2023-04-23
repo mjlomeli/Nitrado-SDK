@@ -27,13 +27,6 @@ class GameServer:
             game_servers.append(game_server)
         return game_servers
 
-    @classmethod
-    def full_game_list(self) -> dict:
-        path = '/gameserver/games'
-        response = Client.get(path=path)
-        data: dict = response.json()['data']
-        return data['games']
-
     def __init__(
             self,
             status: str = None,
