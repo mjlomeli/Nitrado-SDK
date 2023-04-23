@@ -34,6 +34,8 @@ class ArkServer:
     @classmethod
     def find_by_id(cls, service_id: int) -> ArkServer:
         gameserver = GameServer.find_by_id(service_id)
+        if gameserver.game != 'arkxb':
+            raise Exception(f"Server ID {service_id} is not from Ark: Survival Evolved (Xbox)")
         data: dict = dict(gameserver)
         data['query'] = Query(service_id, **data['query'])
         data['settings'] = Settings.from_data(service_id, **data['settings'])
