@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ...lib.client import Client
 from ...gameserver import GameServer
+from ...gameserver.players import Players
 from .query import Query
 from .settings.settings import Settings
 from .game_specific.game_specific import GameSpecific
@@ -43,6 +44,8 @@ class ArkSurvival:
     def all(cls) -> list[ArkSurvival]:
         gameservers = []
         for gameserver in GameServer.all():
+            if gameserver.game != 'arkxb':
+                continue
             data: dict = dict(gameserver)
             data['query'] = Query(gameserver.service_id, **data['query'])
             data['settings'] = Settings.from_data(gameserver.service_id, **data['settings'])
@@ -134,6 +137,9 @@ class ArkSurvival:
         response = Client.get(path=path)
         data: dict = response.json()['data']
         return data['clusterid']
+
+    def players(self) -> list[Players]:
+        return self.__gameserver.players()
 
     def start(self) -> bool:
         return self.__gameserver.start_game('arkxb')
