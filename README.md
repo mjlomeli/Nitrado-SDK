@@ -20,7 +20,7 @@ and create an API key.
 
 # [Wiki - Full documentation](https://github.com/mjlomeli/NitradoAPI/wiki)
 ### Table of contents
-#### 1. [Introduction](https://github.com/mjlomeli/NitradoAPI/wiki/Generate-API-Key)
+#### 1. [Generate API Key](https://github.com/mjlomeli/NitradoAPI/wiki/Generate-API-Key)
    > Shows how to get access to your API key.
 #### 2. [Getting Started](https://github.com/mjlomeli/NitradoAPI/wiki/Getting-Started)
    > Shows how to log in to the client and use the basic code interface
