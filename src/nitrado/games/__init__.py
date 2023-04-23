@@ -1,1 +1,1 @@
-from .ark.ark_survival import ArkSurvival
+from .ark.ark import Ark

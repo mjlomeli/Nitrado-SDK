@@ -1,16 +1,16 @@
 from __future__ import annotations
-from ...lib.client import Client
+from ...lib import Client
 from ...gameserver import GameServer
-from ...gameserver.players import Players
+from ...gameserver import Players
 from .query import Query
-from .settings.settings import Settings
-from .game_specific.game_specific import GameSpecific
-from ...lib.errors import assert_response_is_ok
-from ...lib.errors import assert_response_is_json
+from .settings import Settings
+from .game_specific import GameSpecific
+from ...lib import assert_response_is_ok
+from ...lib import assert_response_is_json
 import requests
 
 
-class ArkSurvival:
+class Ark:
     @classmethod
     def unofficial_server_list(cls) -> dict:
         response = requests.get("http://arkdedicated.com/xbox/cache/unofficialserverlist.json")
@@ -32,16 +32,16 @@ class ArkSurvival:
         return response.text.split('\r\n')
 
     @classmethod
-    def find_by_id(cls, service_id: int) -> ArkSurvival:
+    def find_by_id(cls, service_id: int) -> Ark:
         gameserver = GameServer.find_by_id(service_id)
         data: dict = dict(gameserver)
         data['query'] = Query(service_id, **data['query'])
         data['settings'] = Settings.from_data(service_id, **data['settings'])
         data['game_specific'] = GameSpecific.from_data(service_id, **data['game_specific'])
-        return ArkSurvival(gameserver, **data)
+        return Ark(gameserver, **data)
 
     @classmethod
-    def all(cls) -> list[ArkSurvival]:
+    def all(cls) -> list[Ark]:
         gameservers = []
         for gameserver in GameServer.all():
             if gameserver.game != 'arkxb':
@@ -50,7 +50,7 @@ class ArkSurvival:
             data['query'] = Query(gameserver.service_id, **data['query'])
             data['settings'] = Settings.from_data(gameserver.service_id, **data['settings'])
             data['game_specific'] = GameSpecific.from_data(gameserver.service_id, **data['game_specific'])
-            gameservers.append(ArkSurvival(gameserver, **data))
+            gameservers.append(Ark(gameserver, **data))
         return gameservers
 
     def __init__(

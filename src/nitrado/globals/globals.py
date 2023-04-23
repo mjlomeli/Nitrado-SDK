@@ -1,5 +1,5 @@
 from __future__ import annotations
-from ..lib.client import Client
+from ..lib import Client
 from .maintenance import Maintenance
 
 

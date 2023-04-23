@@ -1,1 +1,1 @@
-from nitrado.games.ark.ark_survival import ArkSurvival
+from .ark import Ark

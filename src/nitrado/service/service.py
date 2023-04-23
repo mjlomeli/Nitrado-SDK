@@ -1,5 +1,5 @@
 from __future__ import annotations
-from ..lib.client import Client
+from ..lib import Client
 from .details import Details
 from .arguments import Arguments
 from .task import Task
@@ -7,7 +7,6 @@ from .notification import Notification
 from .action import Action
 from .logs_page import LogsPage
 from datetime import datetime
-import json
 
 
 class Service:
