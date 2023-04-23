@@ -1,31 +1,27 @@
-from tests.mocked_client.mocked_client import MockedClient
+from tests.mocked_client.mocked_client import MockedClient as Client
 
 URL = "https://api.nitrado.net/"
 
 
 def test_get():
-    client = MockedClient(URL)
-    response = client.get('/services')
+    response = Client.get('/services')
     assert 'status' in response.json()
     assert 'data' in response.json()
 
 
 def test_post():
-    client = MockedClient(URL)
-    response = client.get('/services')
+    response = Client.get('/services')
     assert 'status' in response.json()
     assert 'data' in response.json()
 
 
 def test_delete():
-    client = MockedClient(URL)
-    response = client.get('/services')
+    response = Client.get('/services')
     assert 'status' in response.json()
     assert 'data' in response.json()
 
 
 def test_put():
-    client = MockedClient(URL)
-    response = client.get('/services')
+    response = Client.get('/services')
     assert 'status' in response.json()
     assert 'data' in response.json()

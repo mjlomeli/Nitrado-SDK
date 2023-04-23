@@ -2,13 +2,7 @@ from nitrado import GameServer
 from tests.mocked_client import MockedClient
 
 
-def get_client() -> MockedClient:
-    url = "https://api.nitrado.net/"
-    return MockedClient(url)
-
-
 def get_a_game_server() -> GameServer:
-    client = get_client()
     data = {
         "status": "started",
         "last_status_change": 1679636808,
@@ -368,7 +362,7 @@ def get_a_game_server() -> GameServer:
             "players": []
         }
     }
-    return GameServer(client, data)
+    return GameServer(**data)
 
 
 def test_game_server():
@@ -379,11 +373,3 @@ def test_game_server():
     assert game_server.slots == 20
     assert game_server.query['server_name'] == '[US]- EPIX ARK -Isl1-20x/6Man/FRESHWIPE/MaxWild150/CusDrop?'
 
-
-def test_list_backups():
-    gameserver = get_a_game_server()
-    backups_json = gameserver.backups_list()
-    assert type(backups_json) == dict
-
-
-# TODO: add more test cases

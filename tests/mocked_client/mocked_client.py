@@ -50,32 +50,27 @@ class MockedResponse:
 
 
 class MockedRequests:
-    def __init__(self):
-        pass
-
-    def get(self, path: str, headers: dict = None, data=None, params=None):
+    @classmethod
+    def get(cls, path: str, headers: dict = None, data=None, params=None):
         return MockedResponse(path, RequestType.GET)
 
-    def post(self, path: str, headers: dict = None, data=None, params=None):
+    @classmethod
+    def post(cls, path: str, headers: dict = None, data=None, params=None):
         return MockedResponse(path, RequestType.GET)
 
-    def put(self, path: str, headers: dict = None, data=None, params=None):
+    @classmethod
+    def put(cls, path: str, headers: dict = None, data=None, params=None):
         return MockedResponse(path, RequestType.GET)
 
-    def delete(self, path: str, headers: dict = None, data=None, params=None):
+    @classmethod
+    def delete(cls, path: str, headers: dict = None, data=None, params=None):
         return MockedResponse(path, RequestType.GET)
-
-    def __repr__(self):
-        return f"<MockedRequests(GET, POST, PUT, DELETE)>"
 
 
 class MockedClient:
-    def __init__(self, api_url: str, key: str = None):
-        self.__api_url = api_url
-        self.__key = key
-        self.__requests = MockedRequests()
 
-    def __make_path(self, path: list or str = None):
+    @classmethod
+    def make_path(cls, path: list or str = None):
         if isinstance(path, str):
             return "{}".format(path)
         elif isinstance(path, list):
@@ -84,17 +79,19 @@ class MockedClient:
         else:
             return ''
 
-    def get(self, path: str = None, data: dict = None, params=None):
-        return self.__requests.get(self.__make_path(path))
+    @classmethod
+    def get(cls, path: str = None, params=None, **kwargs):
+        return MockedRequests.get(cls.make_path(path))
 
-    def post(self, path: str = None, data: dict = None, params=None):
-        return self.__requests.post(self.__make_path(path))
+    @classmethod
+    def post(cls, path: str = None, params=None, **kwargs):
+        return MockedRequests.post(cls.make_path(path))
 
-    def delete(self, path: str = None, data: dict = None, params=None):
-        return self.__requests.delete(self.__make_path(path))
+    @classmethod
+    def delete(cls, path: str = None, params=None, **kwargs):
+        return MockedRequests.delete(cls.make_path(path))
 
-    def put(self, path: str = None, data: dict = None, params=None):
-        return self.__requests.put(self.__make_path(path))
+    @classmethod
+    def put(cls, path: str = None, params=None, **kwargs):
+        return MockedRequests.put(cls.make_path(path))
 
-    def __repr__(self):
-        return f"<MockedClient(GET, POST, PUT, DELETE)>"
