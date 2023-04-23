@@ -129,19 +129,19 @@ class ArkSurvival(GameServer):
         data: dict = response.json()['data']
         return data['clusterid']
 
-    def start_server(self) -> bool:
-        return self.start('arkxb')
+    def start(self) -> bool:
+        return self.start_game('arkxb')
 
-    def restart_server(self, restart_message: str = None, log_message: str = None) -> bool:
-        return self.restart(restart_message=restart_message, log_message=log_message)
+    def restart(self, restart_message: str = None, log_message: str = None) -> bool:
+        return self.restart_game(restart_message=restart_message, log_message=log_message)
 
-    def reinstall_server(self) -> bool:
+    def reinstall(self) -> bool:
         return self.install_game('arkxb', modpack=None)
 
-    def stop_server(self, message: str = None, stop_message: str = None) -> bool:
-        return self.stop(message=message, stop_message=stop_message)
+    def stop(self, message: str = None, stop_message: str = None) -> bool:
+        return self.stop_game(message=message, stop_message=stop_message)
 
-    def uninstall_game(self) -> bool:
+    def uninstall(self) -> bool:
         return self.uninstall_game('arkxb')
 
     def white_list_player(self, gamertag: str) -> bool:

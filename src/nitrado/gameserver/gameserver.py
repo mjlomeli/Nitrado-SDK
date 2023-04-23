@@ -104,14 +104,6 @@ class GameServer:
         data: dict = response.json()['data']
         return data['players']
 
-    def start(self, game: str) -> bool:
-        """ :param game: Provide the Folder Short of the specific game. """
-        path = f'/services/{self.service_id}/gameservers/games/start'
-        params = {'game': game}
-        response = Client.post(path=path, params=params)
-        data: dict = response.json()
-        return response.ok and data['status'] == 'success'
-
     def is_gameserver_restorable(self, folder, backup_id) -> bool:
         path = f'/services/{self.service_id}/gameservers/backups/restore_possible'
         params = {'folder': folder, 'backup': backup_id}
@@ -196,24 +188,31 @@ class GameServer:
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 
-    def uninstall_game(self, game: str) -> bool:
-        path = f'/services/{self.service_id}/gameservers/games/uninstall'
-        params = {'game': game}
-        response = Client.delete(path=path, params=params)
+    def stop_game(self, message=None, stop_message=None) -> bool:
+        path = f'/services/{self.service_id}/gameservers/stop'
+        params = {'message': message, 'stop_message': stop_message}
+        response = Client.post(path=path, params=params)
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 
-    def restart(self, restart_message: str = None, log_message: str = None) -> bool:
+    def restart_game(self, restart_message: str = None, log_message: str = None) -> bool:
         path = f'/services/{self.service_id}/gameservers/restart'
         params = {"restart_message": restart_message, "message": log_message}
         response = Client.post(path=path, params=params)
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 
-    def stop(self, message=None, stop_message=None) -> bool:
-        path = f'/services/{self.service_id}/gameservers/stop'
-        params = {'message': message, 'stop_message': stop_message}
+    def install_game(self, game: str, modpack: str = None) -> bool:
+        path = f'/services/{self.service_id}/gameservers/games/install'
+        params = {'game': game, 'modpack': modpack}
         response = Client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def uninstall_game(self, game: str) -> bool:
+        path = f'/services/{self.service_id}/gameservers/games/uninstall'
+        params = {'game': game}
+        response = Client.delete(path=path, params=params)
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 
@@ -326,13 +325,6 @@ class GameServer:
         response = Client.post(path=path, params=params)
         data: dict = response.json()['data']
         return data
-
-    def install_game(self, game: str, modpack: str = None) -> bool:
-        path = f'/services/{self.service_id}/gameservers/games/install'
-        params = {'game': game, 'modpack': modpack}
-        response = Client.post(path=path, params=params)
-        data: dict = response.json()
-        return response.ok and data['status'] == 'success'
 
     def list_games(self) -> list:
         path = f'/services/{self.service_id}/gameservers/games'
