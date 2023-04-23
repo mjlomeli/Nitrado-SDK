@@ -1,10 +1,9 @@
-from nitrado.tools import Client
+from .client import Client
 import json
 
 
 class Service:
-    def __init__(self, client: Client, data: dict):
-        self.__client = client
+    def __init__(self, data: dict):
         self.__data = data
 
         self.id = None
@@ -32,7 +31,7 @@ class Service:
     def log_page(self, page: int) -> dict:
         assert page > 0, "Page number must be greater than 0"
         path = f'/services/{self.id}/logs'
-        response = self.__client.get(path=path, data={'page': page})
+        response = Client.get(path=path, data={'page': page})
         data: dict = response.json()['data']
         return data
 
@@ -49,13 +48,13 @@ class Service:
 
     def notifications(self) -> list:
         path = f'/services/{self.id}/notifications'
-        response = self.__client.get(path=path)
+        response = Client.get(path=path)
         data: dict = response.json()['data']
         return data['notifications']
 
     def tasks(self) -> list:
         path = f'/services/{self.id}/tasks'
-        response = self.__client.get(path=path)
+        response = Client.get(path=path)
         data: dict = response.json()['data']
         return data['tasks']
 
@@ -63,7 +62,7 @@ class Service:
         path = f'/services/{self.id}/tasks'
         params = {'action_method': action_method, 'action_data': action_data, 'minute': minute,
                   'hour': hour, 'day': day, 'month': month, 'weekday': weekday}
-        response = self.__client.post(path=path, params=params)
+        response = Client.post(path=path, params=params)
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 
@@ -71,13 +70,13 @@ class Service:
         path = f'/services{self.id}/tasks/{task_id}'
         params = {'action_method': action_method, 'action_data': action_data, 'minute': minute,
                   'hour': hour, 'day': day, 'month': month, 'weekday': weekday}
-        response = self.__client.put(path=path, params=params)
+        response = Client.put(path=path, params=params)
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 
     def delete_task(self, task_id) -> bool:
         path = f'/services/{self.id}/tasks/{task_id}'
-        response = self.__client.delete(path=path)
+        response = Client.delete(path=path)
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
 

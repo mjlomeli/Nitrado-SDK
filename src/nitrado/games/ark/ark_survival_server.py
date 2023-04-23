@@ -2,7 +2,7 @@ from nitrado.lib.game_server import GameServer
 from nitrado.lib.service import Service
 
 
-class ArkSurvivalServer:
+class ArkSurvivalAPI:
     def __init__(self, gameserver: GameServer):
         self.__service = None
         self.gameserver = gameserver
