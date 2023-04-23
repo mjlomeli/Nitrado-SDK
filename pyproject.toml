@@ -2,6 +2,7 @@
 requires = [
     "setuptools>=42",
     "wheel",
+    "python-dotenv>=1.0.0",
     "requests==2.*"
 ]
 build-backend = "setuptools.build_meta"
