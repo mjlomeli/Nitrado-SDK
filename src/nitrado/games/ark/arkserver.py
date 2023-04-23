@@ -10,7 +10,7 @@ from ...lib import assert_response_is_json
 import requests
 
 
-class Ark:
+class ArkServer:
     @classmethod
     def unofficial_server_list(cls) -> dict:
         response = requests.get("http://arkdedicated.com/xbox/cache/unofficialserverlist.json")
@@ -32,16 +32,16 @@ class Ark:
         return response.text.split('\r\n')
 
     @classmethod
-    def find_by_id(cls, service_id: int) -> Ark:
+    def find_by_id(cls, service_id: int) -> ArkServer:
         gameserver = GameServer.find_by_id(service_id)
         data: dict = dict(gameserver)
         data['query'] = Query(service_id, **data['query'])
         data['settings'] = Settings.from_data(service_id, **data['settings'])
         data['game_specific'] = GameSpecific.from_data(service_id, **data['game_specific'])
-        return Ark(gameserver, **data)
+        return ArkServer(gameserver, **data)
 
     @classmethod
-    def all(cls) -> list[Ark]:
+    def all(cls) -> list[ArkServer]:
         gameservers = []
         for gameserver in GameServer.all():
             if gameserver.game != 'arkxb':
@@ -50,7 +50,7 @@ class Ark:
             data['query'] = Query(gameserver.service_id, **data['query'])
             data['settings'] = Settings.from_data(gameserver.service_id, **data['settings'])
             data['game_specific'] = GameSpecific.from_data(gameserver.service_id, **data['game_specific'])
-            gameservers.append(Ark(gameserver, **data))
+            gameservers.append(ArkServer(gameserver, **data))
         return gameservers
 
     def __init__(
