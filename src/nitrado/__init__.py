@@ -1,10 +1,10 @@
-from .nitrado_api import NitradoAPI
-from .lib.service import Service
-from .lib.game_server import GameServer
+from .nitrado import Nitrado
+from .globals import Global
+from .service import Service
+from .gameserver import GameServer
 from .lib.client import Client
 
 
-
-__all__ = ['NitradoAPI', 'Service', 'GameServer', 'Client']
+__all__ = ['Nitrado', 'Service', 'GameServer', 'Client']
 
 

@@ -19,6 +19,13 @@ class Service:
         data['arguments'] = Arguments(service_id, **data['arguments'])
         return cls(**data)
 
+    @classmethod
+    def all(cls) -> list[Service]:
+        response = Client.get(path='/services')
+        data: dict = response.json()['data']
+        servers = data['services']
+        return [Service(**data) for data in servers]
+
     def __init__(
             self,
             id: int = None,

@@ -1,101 +1,108 @@
-from .errors import assert_response_is_ok
-from .service import Service
-from .client import Client
-import requests
-from pathlib import Path
-import json
+from __future__ import annotations
+from ..lib.client import Client
+from ..service.service import Service
+from .host_systems import HostSystem
+from .operating_system import OperatingSystem
+from .credentials import Credentials
 
 
 class GameServer:
-    def __init__(self, data: dict):
-        self.__data = data
+    @classmethod
+    def find_by_id(cls, service_id: int) -> GameServer:
+        response = Client.get(path=f'/services/{service_id}/gameservers')
+        data: dict = response.json()['data']['gameserver']
+        data['hostsystems'] = HostSystem(service_id, **{
+            name: OperatingSystem(service_id, **values)
+            for name, values in data['hostsystems'].items()
+        })
+        data['credentials'] = Credentials(service_id, **data['credentials'])
+        return GameServer(**data)
 
-        self.status = None
-        self.last_status_change = None
-        self.must_be_started = None
-        self.websocket_token = None
-        self.hostsystems = None
-        self.username = None
-        self.user_id = None
-        self.service_id = None
-        self.location_id = None
-        self.minecraft_mode = None
-        self.ip = None
-        self.ipv6 = None
-        self.port = None
-        self.query_port = None
-        self.rcon_port = None
-        self.label = None
-        self.type = None
-        self.memory = None
-        self.memory_mb = None
-        self.game = None
-        self.game_human = None
-        self.game_specific = None
-        self.modpacks = None
-        self.slots = None
-        self.location = None
-        self.credentials = None
-        self.settings = None
-        self.quota = None
-        self.query = None
-        for k, v in data.items():
-            self.__dict__[k] = v
+    @classmethod
+    def all(cls) -> list[GameServer]:
+        game_servers = []
+        for service in Service.all():
+            game_server = cls.find_by_id(service.id)
+            game_servers.append(game_server)
+        return game_servers
 
-    def service(self) -> Service:
-        response = Client.get(path=f'/services/{self.service_id}')
-        data: dict = response.json()['data']
-        return Service(data['service'])
-
-    def cluster_id(self) -> str:
-        path = f'/services/{self.service_id}/gameservers/games/arkse/gen_cluster_id'
+    @classmethod
+    def full_game_list(self) -> dict:
+        path = '/gameserver/games'
         response = Client.get(path=path)
         data: dict = response.json()['data']
-        return data['clusterid']
+        return data['games']
 
-    def logs_shooter_game(self) -> str:
-        """ Refreshes about every 15+/- minutes """
-        path = f'/services/{self.service_id}/gameservers/file_server/download'
-        params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log"}
-        response = Client.get(path=path, params=params)
+    def __init__(
+            self,
+            status: str = None,
+            last_status_change: int = None,
+            must_be_started: bool = None,
+            websocket_token: str = None,
+            hostsystems: dict = None,
+            username: str = None,
+            user_id: int = None,
+            service_id: int = None,
+            location_id: int = None,
+            minecraft_mode: bool = None,
+            ip: str = None,
+            ipv6: str = None,
+            port: int = None,
+            query_port: int = None,
+            rcon_port: int = None,
+            label: str = None,
+            type: str = None,
+            memory: str = None,
+            memory_mb: int = None,
+            game: str = None,
+            game_human: str = None,
+            game_specific: dict = None,
+            modpacks: dict = None,
+            slots: int = None,
+            location: str = None,
+            credentials: dict = None,
+            settings: dict = None,
+            quota: str = None,
+            query: dict = None,
+            **kwargs
+    ):
+        self.status = status
+        self.last_status_change = last_status_change
+        self.must_be_started = must_be_started
+        self.websocket_token = websocket_token
+        self.hostsystems = hostsystems
+        self.username = username
+        self.user_id = user_id
+        self.service_id = service_id
+        self.location_id = location_id
+        self.minecraft_mode = minecraft_mode
+        self.ip = ip
+        self.ipv6 = ipv6
+        self.port = port
+        self.query_port = query_port
+        self.rcon_port = rcon_port
+        self.label = label
+        self.type = type
+        self.memory = memory
+        self.memory_mb = memory_mb
+        self.game = game
+        self.game_human = game_human
+        self.game_specific = game_specific
+        self.modpacks = modpacks
+        self.slots = slots
+        self.location = location
+        self.credentials = credentials
+        self.settings = settings
+        self.quota = quota
+        self.query = query
+        for k, v in kwargs.items():
+            self.__dict__[k] = v
+
+    def players(self) -> list:
+        path = f'/services/{self.service_id}/gameservers/games/players'
+        response = Client.get(path=path)
         data: dict = response.json()['data']
-        url = data['token']['url']
-        log_response = requests.get(url)
-        assert_response_is_ok(log_response)
-        return log_response.text.replace("\r\n", "\n")
-
-    def logs_restart(self) -> str:
-        """ Refreshes about every 15+/- minutes """
-        path = f'/services/{self.service_id}/gameservers/file_server/download'
-        params = {'file': f"/games/{self.username}/ftproot/restart.log"}
-        response = Client.get(path=path, params=params)
-        data: dict = response.json()['data']
-        url = data['token']['url']
-        log_response = requests.get(url)
-        assert_response_is_ok(log_response)
-        return log_response.text.replace("\r\n", "\n")
-
-    def logs_shooter_game_last(self) -> str:
-        """ Refreshes about every 15+/- minutes """
-        path = f'/services/{self.service_id}/gameservers/file_server/download'
-        params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
-        response = Client.get(path=path, params=params)
-        data: dict = response.json()['data']
-        url = data['token']['url']
-        log_response = requests.get(url)
-        assert_response_is_ok(log_response)
-        return log_response.text.replace("\r\n", "\n")
-
-    def logs_download(self, directory: str = None) -> None:
-        location = Path(directory or Path.cwd())
-        if not location.is_dir():
-            raise NotADirectoryError(f"Directory does not exist: {directory}")
-        with open(location / Path('shooter_games.txt'), 'w') as w:
-            w.write(self.logs_shooter_game())
-        with open(location / Path('shooter_games_last.txt'), 'w') as w:
-            w.write(self.logs_shooter_game_last())
-        with open(location / Path('restart.txt'), 'w') as w:
-            w.write(self.logs_restart())
+        return data['players']
 
     def start(self, game: str) -> bool:
         """ :param game: Provide the Folder Short of the specific game. """
@@ -118,52 +125,6 @@ class GameServer:
         response = Client.post(path=path, params=params)
         data: dict = response.json()
         return response.ok and data['status'] == 'success'
-
-    def download_file(self, file_path) -> dict:
-        path = f'/services/{self.service_id}/gameservers/file_server/download'
-        params = {'file': file_path}
-        response = Client.get(path=path, params=params)
-        data: dict = response.json()['data']
-        return data
-
-    def rename_file(self, file_path, target_path, target_name) -> bool:
-        path = f'/services/{self.service_id}/gameservers/file_server/move'
-        params = {'source_path': file_path, 'target_path': target_path, 'target_filename': target_name}
-        response = Client.post(path=path, params=params)
-        data:dict = response.json()
-        return response.ok and data['status'] == 'success'
-
-    # def rename_file(self, file_path, new_name):
-    #     path = f'/services/{self.service_id}/gameservers/file_server/move'
-    #     target_path = '/'.join(file_path.split("/")[:-1])
-    #     params = {'source_path': file_path, 'target_path': target_path, 'target_filename': new_name}
-    #     return self._client.post(path=path, params=params)
-
-    def donation_history(self, page=0) -> dict:
-        path = f'/services/{self.service_id}/gameservers/boost/history'
-        params = {'page': page}
-        response = Client.get(path=path, params=params)
-        data: dict = response.json()['data']
-        return data
-
-    def donation_settings(self) -> dict:
-        path = f'/services/{self.service_id}/gameservers/boost'
-        response = Client.get(path=path)
-        data: dict = response.json()['data']
-        return data['boosting']
-
-    def update_donation_settings(self, enable=True, message=None, welcome_message=None) -> dict:
-        path = f'/services/{self.service_id}/gameservers/boost'
-        params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
-        response = Client.put(path=path, params=params)
-        data: dict = response.json()
-        return data['boosting']
-
-    def players(self) -> list:
-        path = f'/services/{self.service_id}/gameservers/games/players'
-        response = Client.get(path=path)
-        data: dict = response.json()['data']
-        return data['players']
 
     def white_list_player(self, gamertag: str) -> bool:
         """
@@ -193,6 +154,54 @@ class GameServer:
         response = Client.get(path=path)
         data: dict = response.json()['data']
         return data['gameserver']
+
+    def download_file(self, file_path) -> dict:
+        path = f'/services/{self.service_id}/gameservers/file_server/download'
+        params = {'file': file_path}
+        response = Client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data
+
+    def rename_file(self, file_path, target_path, target_name) -> bool:
+        path = f'/services/{self.service_id}/gameservers/file_server/move'
+        params = {'source_path': file_path, 'target_path': target_path, 'target_filename': target_name}
+        response = Client.post(path=path, params=params)
+        data:dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def donation_history(self, page=0) -> dict:
+        path = f'/services/{self.service_id}/gameservers/boost/history'
+        params = {'page': page}
+        response = Client.get(path=path, params=params)
+        data: dict = response.json()['data']
+        return data
+
+    def donation_settings(self) -> dict:
+        path = f'/services/{self.service_id}/gameservers/boost'
+        response = Client.get(path=path)
+        data: dict = response.json()['data']
+        return data['boosting']
+
+    def update_donation_settings(self, enable=True, message=None, welcome_message=None) -> dict:
+        path = f'/services/{self.service_id}/gameservers/boost'
+        params = {'enable': enable, 'message': message, 'welcome_message': welcome_message}
+        response = Client.put(path=path, params=params)
+        data: dict = response.json()
+        return data['boosting']
+
+    def start_game(self, game: str) -> bool:
+        path = f'/services/{self.service_id}/gameservers/games/start'
+        params = {'game': game}
+        response = Client.post(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
+
+    def uninstall_game(self, game: str) -> bool:
+        path = f'/services/{self.service_id}/gameservers/games/uninstall'
+        params = {'game': game}
+        response = Client.delete(path=path, params=params)
+        data: dict = response.json()
+        return response.ok and data['status'] == 'success'
 
     def restart(self, restart_message: str = None, log_message: str = None) -> bool:
         path = f'/services/{self.service_id}/gameservers/restart'
@@ -297,13 +306,6 @@ class GameServer:
         data: dict = response.json()['data']
         return data['size']
 
-    def file_copy(self, source_path, target_path, target_name) -> bool:
-        path = f'/services/{self.service_id}/gameservers/file_server/copy'
-        params = {'source_path': source_path, 'target_path': target_path, 'target_name': target_name}
-        response = Client.post(path=path, params=params)
-        data: dict = response.json()
-        return response.ok and data['status'] == 'success'
-
     def files_stat(self, files_paths: list) -> list:
         path = f'/services/{self.service_id}/gameservers/file_server/stat'
         params = {'files': files_paths}
@@ -325,12 +327,6 @@ class GameServer:
         data: dict = response.json()['data']
         return data
 
-    def full_game_list(self) -> dict:
-        path = '/gameserver/games'
-        response = Client.get(path=path)
-        data: dict = response.json()['data']
-        return data['games']
-
     def install_game(self, game: str, modpack: str = None) -> bool:
         path = f'/services/{self.service_id}/gameservers/games/install'
         params = {'game': game, 'modpack': modpack}
@@ -343,20 +339,6 @@ class GameServer:
         response = Client.get(path=path)
         data: dict = response.json()['data']
         return data['games']
-
-    def start_game(self, game: str) -> bool:
-        path = f'/services/{self.service_id}/gameservers/games/start'
-        params = {'game': game}
-        response = Client.post(path=path, params=params)
-        data: dict = response.json()
-        return response.ok and data['status'] == 'success'
-
-    def uninstall_game(self, game: str) -> bool:
-        path = f'/services/{self.service_id}/gameservers/games/uninstall'
-        params = {'game': game}
-        response = Client.delete(path=path, params=params)
-        data: dict = response.json()
-        return response.ok and data['status'] == 'success'
 
     def change_mysql_password(self, password: str) -> bool:
         path = f'/services/{self.service_id}/gameservers/mysql/password'
@@ -470,26 +452,18 @@ class GameServer:
         data: dict = response.json()
         return data['boosting']
 
-    def __contains__(self, item):
-        return item in self.__data
-
     def __getitem__(self, item):
-        return self.__data[item]
+        return self.__dict__[item]
 
     def keys(self):
-        return self.__data.keys()
-
-    def __iter__(self):
-        return iter(self.__data)
+        return self.__dict__.keys()
 
     def __repr__(self):
         service_id = f"service_id={repr(self.service_id)}"
-        location = f"location={repr(self.location)}"
+        status = f"status={repr(self.status)}"
         slots = f"slots={repr(self.slots)}"
+        memory_mb = f"memory_mb={repr(self.memory_mb)}"
         game_human = f"game_human={repr(self.game_human)}"
-        ip = f"ip={repr(self.ip)}"
-        params = ", ".join([service_id, location, slots, ip, game_human])
-        return f"<GameServer({params})>"
+        params = [s for s in [service_id, status, slots, memory_mb, game_human]]
+        return f"<{self.__class__.__name__}({', '.join(params)}, ...)>"
 
-    def __str__(self):
-        return json.dumps(self.__data, indent=3)
