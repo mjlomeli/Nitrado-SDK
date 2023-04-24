@@ -53,6 +53,7 @@ print(health)
 
 <Global(success=True, data=None, message='All systems operate as expected.', status='success')>
 ```
+<br />
 
 ### [Services](https://github.com/mjlomeli/NitradoAPI/wiki/Services)
 This example highlights how to get the service.
@@ -70,6 +71,7 @@ print(services)
     <Service(id=1033333, status='active', type_human='Publicserver 30 slots', suspend_date='2023-09-07T06:51:41')>
 ]
 ``` 
+<br />
 
 ### [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
 This example highlights how to get the gameserver.
@@ -87,5 +89,5 @@ print(gameservers)
 ]
 ```
 
-
+<br />
 
