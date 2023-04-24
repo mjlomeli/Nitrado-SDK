@@ -10,6 +10,7 @@ from .players import Players
 class GameServer:
     @classmethod
     def find_by_id(cls, service_id: int) -> GameServer:
+        """Get a gameserver by service id."""
         response = Client.get(path=f'/services/{service_id}/gameservers')
         data: dict = response.json()['data']['gameserver']
         data['hostsystems'] = HostSystem(service_id, **{
@@ -21,6 +22,7 @@ class GameServer:
 
     @classmethod
     def all(cls) -> list[GameServer]:
+        """Get all gameservers."""
         game_servers = []
         for service in Service.all():
             game_server = cls.find_by_id(service.id)

@@ -5,7 +5,7 @@ from .gameserver import GameServer
 from pathlib import Path
 
 
-def initialize(api_key: str):
+def initialize(api_key: str) -> None:
     """Saves the Nitrado API key in a local .env file"""
     if not Path('.env').exists():
         Path('.env').touch()
@@ -26,18 +26,22 @@ def initialize(api_key: str):
 
 
 def services() -> list[Service]:
+    """Get a list of all services."""
     return Service.all()
 
 
 def gameservers() -> list[GameServer]:
+    """Get a list of all gameservers."""
     return GameServer.all()
 
 
 def gameserver_by_service_id(service_id: int) -> GameServer:
+    """Get a gameserver by service id."""
     return GameServer.find_by_id(service_id)
 
 
 def service_by_id(service_id: int) -> Service:
+    """Get a service by id."""
     return Service.find_by_id(service_id)
 
 

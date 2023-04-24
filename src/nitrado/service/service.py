@@ -12,6 +12,7 @@ from datetime import datetime
 class Service:
     @classmethod
     def find_by_id(cls, service_id: int) -> Service:
+        """Get a service by id."""
         response = Client.get(path=f'/services/{service_id}')
         data: dict = response.json()['data']['service']
         data['details'] = Details(service_id, **data['details'])
@@ -20,6 +21,7 @@ class Service:
 
     @classmethod
     def all(cls) -> list[Service]:
+        """Get all services."""
         response = Client.get(path='/services')
         data: dict = response.json()['data']
         servers = data['services']
