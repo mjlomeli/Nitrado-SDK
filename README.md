@@ -41,7 +41,6 @@ and create an API key.
 
 # Examples
 
-<br />
 
 ### [Globals](https://github.com/mjlomeli/NitradoAPI/wiki/Globals)
 The basic maintanance tools from Nitrado API.
