@@ -71,7 +71,7 @@ print(services)
 ]
 ``` 
 
-#### [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
+### [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
 This example highlights how to get the gameserver.
 
 ```python
