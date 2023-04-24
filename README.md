@@ -53,11 +53,6 @@ version = Global.version()
 print(version)
 
 'nitrapi-1201-wh2h4'
-
-health = Global.health_check()
-print(health)
-
-<Global(success=True, data=None, message='All systems operate as expected.', status='success')>
 ```
 <br />
 
