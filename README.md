@@ -24,18 +24,20 @@ and create an API key.
    > Shows how to get access to your API key.
 #### 2. [Getting Started](https://github.com/mjlomeli/NitradoAPI/wiki/Getting-Started)
    > Shows how to log in to the client and use the basic code interface
-#### 3. [Services](https://github.com/mjlomeli/NitradoAPI/wiki/Services)
+#### 3. [Globals](https://github.com/mjlomeli/NitradoAPI/wiki/Globals)
+   > Basic requests from Nitrado for health and maintenance checks.
+#### 4. [Services](https://github.com/mjlomeli/NitradoAPI/wiki/Services)
    > Data provided outside of the game server. Like server status, user id, and auto extension plan.
-#### 4. [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
+#### 5. [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
    > Data directly related to the game server. This includes the player list, game settings, etc.
-#### 5. [Games](https://github.com/mjlomeli/NitradoAPI/wiki/Games)
+#### 6. [Games](https://github.com/mjlomeli/NitradoAPI/wiki/Games)
    > Custom game specific libraries.
 
 <br />
 
 # Examples
 
-### Globals
+### [Globals](https://github.com/mjlomeli/NitradoAPI/wiki/Globals)
 The basic maintanance tools from Nitrado API.
 
 ```python
@@ -52,7 +54,7 @@ print(health)
 <Global(success=True, data=None, message='All systems operate as expected.', status='success')>
 ```
 
-### Services
+### [Services](https://github.com/mjlomeli/NitradoAPI/wiki/Services)
 This example highlights how to get the service.
 
 ```python
@@ -69,7 +71,7 @@ print(services)
 ]
 ``` 
 
-#### GameServer
+#### [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
 This example highlights how to get the gameserver.
 
 ```python
