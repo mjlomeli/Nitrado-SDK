@@ -35,27 +35,21 @@ and create an API key.
 
 # Examples
 
-### Connect the Client
-To begin using the API you must have the API key saved as an environment variable.
-The identifer must be labeled as `NITRADO_API_KEY`.
-
-```text
-NITRADO_API_KEY=123456789abcdefghijklmnop
-```
-
-### Saving your API key
-If you don't know how to save your API key as an environment variable, run this 
-to save it in a `.env` file locally. 
-
-If you already have a `.env` file, this will append the key to the file.
-
-An important rule of thumb is to never save this file publicly. Add it to your 
-`.gitignore` file before attempting to upload changes to your repository.
+### Globals
+The basic maintanance tools from Nitrado API.
 
 ```python
-from nitrado import initialize
+from nitrado import Global
 
-initialize("your-api-key")
+version = Global.version()
+print(version)
+
+'nitrapi-1201-wh2h4'
+
+health = Global.health_check()
+print(health)
+
+<Global(success=True, data=None, message='All systems operate as expected.', status='success')>
 ```
 
 ### Services
