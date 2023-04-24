@@ -1,11 +1,28 @@
-from .lib.client import Client
+from dotenv import load_dotenv
+from .lib import Client
 from .service import Service
 from .gameserver import GameServer
+from pathlib import Path
 
 
-def initialize(key: str = None) -> None:
-    if key is not None:
-        Client.initialize(key)
+def initialize(api_key: str):
+    """Saves the Nitrado API key in a local .env file"""
+    if not Path('.env').exists():
+        Path('.env').touch()
+    with open('.env', 'r+') as r:
+        content = []
+        found = False
+        for line in r.readlines():
+            if line.find(f'{Client.ENV_NAME}=') == 0:
+                content += [f"{Client.ENV_NAME}={api_key}\n"]
+                found = True
+            else:
+                content += [line]
+        if not found:
+            content = [f"{Client.ENV_NAME}={api_key}\n"] + content
+        r.seek(0)
+        r.write(''.join(content))
+        load_dotenv()
 
 
 def services() -> list[Service]:

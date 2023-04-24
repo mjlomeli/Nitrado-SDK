@@ -11,24 +11,6 @@ class Client:
     NITRADO_API_URL = "https://api.nitrado.net"
 
     @classmethod
-    def initialize(cls, api_key: str):
-        """Saves the Nitrado API key in a local .env file"""
-        with open('.env', 'r+') as r:
-            content = []
-            found = False
-            for line in r.readlines():
-                if line.find(f'{cls.ENV_NAME}=') == 0:
-                    content += [f"{cls.ENV_NAME}={api_key}\n"]
-                    found = True
-                else:
-                    content += [line]
-            if not found:
-                content = [f"{cls.ENV_NAME}={api_key}\n"] + content
-            r.seek(0)
-            r.write(''.join(content))
-            load_dotenv()
-
-    @classmethod
     def headers(cls) -> dict:
         if cls.ENV_NAME in dotenv_values():
             key = dotenv_values()[cls.ENV_NAME]
