@@ -1,9 +1,11 @@
-# Python Nitrado SDK
+# Nitrado SDK  &nbsp; ![Python](https://img.shields.io/badge/Python-3776AB.svg?style=for-the-badge&logo=Python&logoColor=white)
 
-[![Testing](https://github.com/mjlomeli/NitradoAPI/actions/workflows/tests.yml/badge.svg)](#) tests need a Nitrado subscription account 
+[![Testing](https://github.com/mjlomeli/NitradoAPI/actions/workflows/tests.yml/badge.svg)](#)
 
 
 A Python based SDK for the [Nitrado RESTful API](https://doc.nitrado.net/) published at [PyPI](https://pypi.org/project/nitrado/).
+
+<br />
 
 # Installation
 In your terminal install the nitrado package with pip.
@@ -12,6 +14,7 @@ In your terminal install the nitrado package with pip.
 pip install nitrado
 ```
 
+<br />
 
 # Overview
 
@@ -24,41 +27,35 @@ and create an API key.
    > Shows how to get access to your API key.
 #### 2. [Getting Started](https://github.com/mjlomeli/NitradoAPI/wiki/Getting-Started)
    > Shows how to log in to the client and use the basic code interface
-#### 3. [Services](https://github.com/mjlomeli/NitradoAPI/wiki/Services)
+#### 3. [Globals](https://github.com/mjlomeli/NitradoAPI/wiki/Globals)
+   > Basic requests from Nitrado for health and maintenance checks.
+#### 4. [Services](https://github.com/mjlomeli/NitradoAPI/wiki/Services)
    > Data provided outside of the game server. Like server status, user id, and auto extension plan.
-#### 4. [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
+#### 5. [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
    > Data directly related to the game server. This includes the player list, game settings, etc.
-#### 5. [Games](https://github.com/mjlomeli/NitradoAPI/wiki/Games)
+#### 6. [Games](https://github.com/mjlomeli/NitradoAPI/wiki/Games)
    > Custom game specific libraries.
 
+<br />
 <br />
 
 # Examples
 
-### Connect the Client
-To begin using the API you must have the API key saved as an environment variable.
-The identifer must be labeled as `NITRADO_API_KEY`.
 
-```text
-NITRADO_API_KEY=123456789abcdefghijklmnop
-```
-
-### Saving your API key
-If you don't know how to save your API key as an environment variable, run this 
-to save it in a `.env` file locally. 
-
-If you already have a `.env` file, this will append the key to the file.
-
-An important rule of thumb is to never save this file publicly. Add it to your 
-`.gitignore` file before attempting to upload changes to your repository.
+### [Globals](https://github.com/mjlomeli/NitradoAPI/wiki/Globals)
+The basic maintanance tools from Nitrado API.
 
 ```python
-from nitrado import initialize
+from nitrado import Global
 
-initialize("your-api-key")
+version = Global.version()
+print(version)
+
+'nitrapi-1201-wh2h4'
 ```
+<br />
 
-### Services
+### [Services](https://github.com/mjlomeli/NitradoAPI/wiki/Services)
 This example highlights how to get the service.
 
 ```python
@@ -74,8 +71,9 @@ print(services)
     <Service(id=1033333, status='active', type_human='Publicserver 30 slots', suspend_date='2023-09-07T06:51:41')>
 ]
 ``` 
+<br />
 
-#### GameServer
+### [GameServer](https://github.com/mjlomeli/NitradoAPI/wiki/GameServer)
 This example highlights how to get the gameserver.
 
 ```python
@@ -91,5 +89,5 @@ print(gameservers)
 ]
 ```
 
-
+<br />
 
