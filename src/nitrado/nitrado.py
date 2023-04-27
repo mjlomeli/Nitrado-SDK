@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 from .lib import Client
 from .service import Service
@@ -5,8 +6,11 @@ from .gameserver import GameServer
 from pathlib import Path
 
 
-def initialize(api_key: str) -> None:
+def initialize(api_key: str, save=True) -> None:
     """Saves the Nitrado API key in a local .env file"""
+    os.environ[Client.ENV_NAME] = api_key
+    if not save:
+        return
     if not Path('.env').exists():
         Path('.env').touch()
     with open('.env', 'r+') as r:

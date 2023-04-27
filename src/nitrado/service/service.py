@@ -27,6 +27,24 @@ class Service:
         servers = data['services']
         return [Service(**data) for data in servers]
 
+    @classmethod
+    def tasks_by_service_id(cls, service_id: int) -> list:
+        path = f'/services/{service_id}/tasks'
+        response = Client.get(path=path)
+        data: dict = response.json()['data']['tasks']
+        return [Task(service_id, **kwargs) for kwargs in data]
+
+    @classmethod
+    def notifications_by_service_id(cls, service_id: int) -> list:
+        path = f'/services/{service_id}/notifications'
+        response = Client.get(path=path)
+        items: list = response.json()['data']['notifications']
+        notif = []
+        for data in items:
+            data['actions'] = [Action(service_id, **a) for a in data['actions']]
+            notif.append(Notification(**data))
+        return notif
+
     def __init__(
             self,
             id: int = None,
