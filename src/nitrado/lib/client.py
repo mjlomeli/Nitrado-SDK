@@ -2,6 +2,7 @@ import os
 from requests import get, post, put, delete, Response
 from dotenv import load_dotenv, dotenv_values
 from .errors import assert_success
+from requests.exceptions import ConnectionError, ConnectTimeout, Timeout
 
 load_dotenv()
 
@@ -26,36 +27,66 @@ class Client:
 
     @classmethod
     def get_without_api_key(cls, path: str = None, params=None, **kwargs) -> Response:
-        response = get(cls.make_path(path), params=params, **kwargs)
-        assert_success(response)
-        return response
+        try:
+            response = get(cls.make_path(path), params=params, **kwargs)
+            assert_success(response)
+            return response
+        except ConnectTimeout:
+            return cls.get_without_api_key(path=path, params=params, **kwargs)
+        except ConnectionError:
+            return cls.get_without_api_key(path=path, params=params, **kwargs)
 
     @classmethod
     def get(cls, path: str = None, params=None, **kwargs) -> Response:
-        response = get(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
-        assert_success(response)
-        return response
+        try:
+            response = get(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
+            assert_success(response)
+            return response
+        except ConnectTimeout:
+            return cls.get(path=path, params=params, **kwargs)
+        except ConnectionError:
+            return cls.get(path=path, params=params, **kwargs)
 
     @classmethod
     def post_without_api_key(cls, path: str = None, params=None, **kwargs) -> Response:
-        response = post(cls.make_path(path), params=params, **kwargs)
-        assert_success(response)
-        return response
+        try:
+            response = post(cls.make_path(path), params=params, **kwargs)
+            assert_success(response)
+            return response
+        except ConnectTimeout:
+            return cls.post_without_api_key(path=path, params=params, **kwargs)
+        except ConnectionError:
+            return cls.post_without_api_key(path=path, params=params, **kwargs)
 
     @classmethod
     def post(cls, path: str = None, params=None, **kwargs) -> Response:
-        response = post(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
-        assert_success(response)
-        return response
+        try:
+            response = post(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
+            assert_success(response)
+            return response
+        except ConnectTimeout:
+            return cls.post(path=path, params=params, **kwargs)
+        except ConnectionError:
+            return cls.post(path=path, params=params, **kwargs)
 
     @classmethod
     def delete(cls, path: str = None, params=None, **kwargs) -> Response:
-        response = delete(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
-        assert_success(response)
-        return response
+        try:
+            response = delete(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
+            assert_success(response)
+            return response
+        except ConnectTimeout:
+            return cls.delete(path=path, params=params, **kwargs)
+        except ConnectionError:
+            return cls.delete(path=path, params=params, **kwargs)
 
     @classmethod
     def put(cls, path: str = None, params=None, **kwargs) -> Response:
-        response = put(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
-        assert_success(response)
-        return response
+        try:
+            response = put(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
+            assert_success(response)
+            return response
+        except ConnectTimeout:
+            return cls.put(path=path, params=params, **kwargs)
+        except ConnectionError:
+            return cls.put(path=path, params=params, **kwargs)
