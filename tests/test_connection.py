@@ -4,46 +4,28 @@ Tests Nitrado connections. If any fail, then this means any of the following:
     - the URLs are no longer valid
     - responses from Nitrado has changed
 """
+from nitrado import Global
 from nitrado.lib import Client
 
 
 
 
-def test_ping():
-    path = '/ping'
-    try:
-        response = Client.get(path)
-        json: dict = response.json()
-        error_message = f"The url no longer has access to 'status' and 'message' from api request: /{path}"
-        assert 'status' in json and 'message' in json, error_message
-        api_error_message = 'message' in json or f"Nitrado's api is down or the url is invalid: /{path}"
-        assert json['status'] == 'success', api_error_message
-    except Exception:
-        raise Exception(f"Nitrado's api is down or the url is invalid: /{path}")
+def test_health_check():
+    health = Global.health_check()
+    error_message = f"Nitrado's API is down or the url is invalid."
+    assert health.success, error_message
 
 
 def test_maintenance():
-    path = '/maintenance'
-    try:
-        response = Client.get(path)
-        json: dict = response.json()
-        error_message = f"The url no longer has access to 'status' and 'data' from api request: /{path}"
-        assert 'status' in json and 'data' in json, error_message
-        api_error_message = 'message' in json or f"Nitrado's api is down or the url is invalid: /{path}"
-        assert json['status'] == 'success', api_error_message
-    except Exception:
-        raise Exception(f"Nitrado's api is down or the url is invalid: /{path}")
+    maintenance = Global.maintenance_status()
+    error_message = f"Nitrado's API is down or the url is invalid."
+    assert maintenance.dns_backend is not None, error_message
+    assert maintenance.cloud_backend is not None, error_message
+    assert maintenance.domain_backend is not None, error_message
 
 
 def test_version():
-    path = "/version"
-    try:
-        response = Client.get(path)
-        json: dict = response.json()
-        error_message = f"The url no longer has access to 'status' and 'message' from api request: /{path}"
-        assert 'status' in json and 'message' in json, error_message
-        api_error_message = 'message' in json or f"Nitrado's api is down or the url is invalid: /{path}"
-        assert json['status'] == 'success', api_error_message
-    except Exception:
-        raise Exception(f"Nitrado's api is down or the url is invalid: /{path}")
+    version = Global.version()
+    error_message = f"Nitrado's API is down or the url is invalid."
+    assert version is not None, error_message
 

@@ -8,20 +8,20 @@ class Global:
     @classmethod
     def health_check(cls) -> Global:
         """Health information about the Nitrado API."""
-        response = Client.get('/ping')
+        response = Client.get_without_api_key('/ping')
         kwargs: dict = response.json()
         return cls(**kwargs)
 
     @classmethod
     def maintenance_status(cls) -> Maintenance:
-        response = Client.get('/maintenance')
+        response = Client.get_without_api_key('/maintenance')
         kwargs: dict = response.json()
         return Maintenance(**kwargs['data']['maintenance'])
 
     @classmethod
     def version(cls) -> str:
         """Nitrado API version."""
-        response = Client.get('/version')
+        response = Client.get_without_api_key('/version')
         kwargs: dict = response.json()
         return cls(**kwargs).message
 
@@ -29,7 +29,7 @@ class Global:
     def full_game_list(cls) -> list[Game]:
         """Get all games supported by Nitrado."""
         path = '/gameserver/games'
-        response = Client.get(path=path)
+        response = Client.get_without_api_key(path=path)
         data: dict = response.json()['data']
         return Game.from_data(**data['games'])
 
