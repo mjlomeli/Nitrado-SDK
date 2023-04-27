@@ -44,10 +44,13 @@ class Global:
         path = '/token'
         if Client.ENV_NAME not in dotenv_values() and Client.ENV_NAME not in os.environ:
             return Token()
-        response = Client.get(path=path)
-        kwargs: dict = response.json()
-        if 'data' in kwargs and 'status' in kwargs and kwargs['status'] == 'success':
-            return Token.from_data(kwargs['data'])
+        try:
+            response = Client.get(path=path)
+            kwargs: dict = response.json()
+            if 'data' in kwargs and 'status' in kwargs and kwargs['status'] == 'success':
+                return Token.from_data(kwargs['data'])
+        except Exception:
+            pass
         return Token()
 
     def __init__(self, data: dict = None, message: str = None, status: str = None):
