@@ -6,7 +6,7 @@ from .gameserver import GameServer
 from pathlib import Path
 
 
-def initialize(api_key: str, save=True) -> None:
+def initialize(api_key: str, save=False) -> None:
     """Saves the Nitrado API key in a local .env file"""
     os.environ[Client.ENV_NAME] = api_key
     if not save:
