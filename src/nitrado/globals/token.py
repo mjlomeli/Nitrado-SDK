@@ -9,7 +9,7 @@ from requests import get
 
 class Token:
     @classmethod
-    def from_api_token(cls, api_key: str = None):
+    def from_api_token(cls, api_key: str = None) -> Token:
         """Gets api token from parameters or .env variables if not provided"""
         path = '/token'
         if api_key is not None:
@@ -32,7 +32,7 @@ class Token:
         return Token()
 
     @classmethod
-    def from_data(cls, data: dict):
+    def from_data(cls, data: dict) -> Token:
         token = data['token']
         return cls(
             id=token['id'],
