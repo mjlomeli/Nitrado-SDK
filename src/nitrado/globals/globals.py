@@ -4,6 +4,8 @@ from .maintenance import Maintenance
 from .game import Game
 from .token import Token
 from dotenv import load_dotenv, dotenv_values
+from requests import get
+from ..lib.errors import assert_success
 import os
 
 
@@ -40,18 +42,8 @@ class Global:
         return Game.from_data(**data['games'])
 
     @classmethod
-    def token_info(cls) -> Token:
-        path = '/token'
-        if Client.ENV_NAME not in dotenv_values() and Client.ENV_NAME not in os.environ:
-            return Token()
-        try:
-            response = Client.get(path=path)
-            kwargs: dict = response.json()
-            if 'data' in kwargs and 'status' in kwargs and kwargs['status'] == 'success':
-                return Token.from_data(kwargs['data'])
-        except Exception:
-            pass
-        return Token()
+    def token_info(cls, api_key: str = None) -> Token:
+        return Token.from_api_token(api_key=api_key)
 
     def __init__(self, data: dict = None, message: str = None, status: str = None):
         self.success = status == 'success'

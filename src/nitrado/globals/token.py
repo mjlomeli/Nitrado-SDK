@@ -1,8 +1,36 @@
 from __future__ import annotations
 from datetime import datetime
+from ..lib.client import Client
+from ..lib.errors import assert_success
+from dotenv import dotenv_values
+import os
+from requests import get
 
 
 class Token:
+    @classmethod
+    def from_api_token(cls, api_key: str = None):
+        """Gets api token from parameters or .env variables if not provided"""
+        path = '/token'
+        if api_key is not None:
+            key = api_key
+        elif Client.ENV_NAME in dotenv_values():
+            key = dotenv_values()[Client.ENV_NAME]
+        elif Client.ENV_NAME in os.environ:
+            key = os.environ[Client.ENV_NAME]
+        else:
+            return Token()
+        headers = {'Authorization': f'Bearer {key}'}
+        try:
+            response = get(Client.make_path(path), headers=headers)
+            assert_success(response)
+            kwargs: dict = response.json()
+            if 'data' in kwargs and 'status' in kwargs and kwargs['status'] == 'success':
+                return Token.from_data(kwargs['data'])
+        except Exception:
+            pass
+        return Token()
+
     @classmethod
     def from_data(cls, data: dict):
         token = data['token']
