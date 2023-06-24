@@ -15,8 +15,6 @@ class Service:
         """Get a service by id."""
         response = Client.get(path=f'/services/{service_id}')
         data: dict = response.json()['data']['service']
-        data['details'] = Details(service_id, **data['details'])
-        data['arguments'] = Arguments(service_id, **data['arguments'])
         return cls(**data)
 
     @classmethod
@@ -24,8 +22,7 @@ class Service:
         """Get all services."""
         response = Client.get(path='/services')
         data: dict = response.json()['data']
-        servers = data['services']
-        return [Service(**data) for data in servers]
+        return [cls(**service) for service in data['services']]
 
     @classmethod
     def tasks_by_service_id(cls, service_id: int) -> list:
@@ -60,7 +57,7 @@ class Service:
             auto_extension_external: bool = False,
             type: str = None,
             type_human: str = None,
-            details: Details = None,
+            details: dict = None,
             start_date: str = None,
             suspend_date: str = None,
             delete_date: str = None,
@@ -68,7 +65,7 @@ class Service:
             deleting_in: int = None,
             readonly: bool = False,
             has_benefits: bool = False,
-            arguments: Arguments = None,
+            arguments: dict = None,
             roles: list = None,
             is_owner: bool = False,
             servicetype: int = None,
@@ -87,7 +84,6 @@ class Service:
         self.auto_extension_external = auto_extension_external
         self.type = type
         self.type_human = type_human
-        self.details = details
         self.start_date = None if start_date is None else datetime.fromisoformat(start_date)
         self.suspend_date = None if start_date is None else datetime.fromisoformat(suspend_date)
         self.delete_date = None if start_date is None else datetime.fromisoformat(delete_date)
@@ -95,10 +91,11 @@ class Service:
         self.deleting_in = deleting_in
         self.readonly = readonly
         self.has_benefits = has_benefits
-        self.arguments = arguments
         self.roles = roles
         self.is_owner = is_owner
         self.servicetype = servicetype
+        self.details: Details | None = Details(id, **details) if details else None
+        self.arguments: Arguments | None = Arguments(id, **arguments) if arguments else None
         for k, v in kwargs.items():
             self.__dict__[k] = v
 

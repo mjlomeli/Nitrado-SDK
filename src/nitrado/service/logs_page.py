@@ -10,7 +10,6 @@ class LogsPage:
         path = f'/services/{service_id}/logs'
         response = Client.get(path=path, data={'page': page})
         data: dict = response.json()['data']
-        data['logs'] = [Log(service_id, **log) for log in data['logs']]
         return cls(service_id, **data)
 
     def __init__(
@@ -26,11 +25,14 @@ class LogsPage:
         self.current_page = current_page
         self.page_count = page_count
         self.log_count = log_count
-        self.logs = [] if logs is None else logs
+        self.logs = []
         self.logs_per_page = logs_per_page
         self.service_id = service_id
         for k, v in kwargs.items():
-            self.__dict__[k] = v
+            if k == 'logs' and isinstance(logs, list):
+                self.logs = [Log(service_id, **log) for log in logs]
+            else:
+                self.__dict__[k] = v
 
     def __iter__(self):
         return iter(self.logs)

@@ -13,12 +13,11 @@ class GameServer:
         """Get a gameserver by service id."""
         response = Client.get(path=f'/services/{service_id}/gameservers')
         data: dict = response.json()['data']['gameserver']
-        data['hostsystems'] = HostSystem(service_id, **{
-            name: OperatingSystem(service_id, **values)
-            for name, values in data['hostsystems'].items()
-        })
-        data['credentials'] = Credentials(service_id, **data['credentials'])
         return GameServer(**data)
+
+    @classmethod
+    def find_by_ids(cls, service_ids: list[int]):
+        return [cls.find_by_id(id) for id in service_ids]
 
     @classmethod
     def all(cls) -> list[GameServer]:
@@ -93,6 +92,14 @@ class GameServer:
         self.query = query
         for k, v in kwargs.items():
             self.__dict__[k] = v
+        self.credentials: Credentials | None = Credentials(service_id, **credentials) if credentials else None
+        if hostsystems:
+            self.hostsystems = HostSystem(service_id, **{
+                name: OperatingSystem(service_id, **values)
+                for name, values in hostsystems.items()
+            })
+        else:
+            self.hostsystems = None
 
     def players(self) -> list[Players]:
         path = f'/services/{self.service_id}/gameservers/games/players'
