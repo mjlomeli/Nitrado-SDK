@@ -64,7 +64,7 @@ class ArkServer:
     def find_by_gamertag(cls, gamertag: str) -> ArkServer | None:
         for ark in ArkServer.all():
             for player in ark.players():
-                if player.name.lower() == gamertag:
+                if player.online and player.name.lower() == gamertag:
                     return ark
 
     def __init__(
