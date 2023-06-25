@@ -35,7 +35,7 @@ class ArkServer:
         return response.text.split('\r\n')
 
     @classmethod
-    def find_by_id(cls, service_id: int) -> ArkServer:
+    def find_by_service_id(cls, service_id: int) -> ArkServer:
         """Find an ArkServer by service id."""
         gameserver = GameServer.find_by_id(service_id)
         if gameserver.game != 'arkxb':
@@ -56,9 +56,8 @@ class ArkServer:
     @classmethod
     def find_by_gamertag(cls, gamertag: str) -> ArkServer | None:
         for ark in ArkServer.all():
-            for player in ark.players():
-                if player.online and player.name.lower() == gamertag:
-                    return ark
+            if ark.has_player(gamertag):
+                return ark
 
     def __init__(
             self,
@@ -79,38 +78,50 @@ class ArkServer:
 
     @property
     def server_name(self):
-        return self.__query.server_name
+        return self.query.server_name
 
     @property
     def map(self) -> str:
         """The map name."""
-        return self.__query.map
+        return self.query.map
 
     @property
     def player_max(self) -> int:
         """Maximum players a server can have."""
-        return self.__query.player_max
+        return self.query.player_max
 
     @property
     def player_current(self) -> int:
         """Number of players in the server."""
-        return self.__query.player_current
+        return self.query.player_current
 
     @property
     def admin_password(self) -> str:
-        return self.__settings.config.admin_password
+        return self.settings.config.admin_password
 
     @property
     def server_password(self) -> str:
-        return self.__settings.config.server_password
+        return self.settings.config.server_password
 
     @property
     def spectator_password(self) -> str:
-        return self.__settings.config.spectatorpassword
+        return self.settings.config.spectatorpassword
 
     @property
     def current_admin_password(self) -> str:
-        return self.__settings.config.current_admin_password
+        return self.settings.config.current_admin_password
+
+    def has_player(self, gamertag: str) -> bool:
+        for player in self.players():
+            if player.online and player.name.lower() == gamertag.lower():
+                return True
+        return False
+
+    def player_has_visited(self, gamertag: str) -> bool:
+        for player in self.players():
+            if player.name.lower() == gamertag.lower():
+                return True
+        return False
 
     def log_shooter_game(self) -> str:
         """The server's logs. Refreshes about every 15+/- minutes """
