@@ -41,24 +41,17 @@ class ArkServer:
         if gameserver.game != 'arkxb':
             raise Exception(f"Server ID {service_id} is not from Ark: Survival Evolved (Xbox)")
         data: dict = dict(gameserver)
-        data['query'] = Query(service_id, **data['query'])
-        data['settings'] = Settings.from_data(service_id, **data['settings'])
-        data['game_specific'] = GameSpecific.from_data(service_id, **data['game_specific'])
-        return ArkServer(gameserver, **data)
+        return ArkServer(**data)
 
     @classmethod
     def all(cls) -> list[ArkServer]:
         """Get all ArkServers."""
-        gameservers = []
+        arkservers = []
         for gameserver in GameServer.all():
             if gameserver.game != 'arkxb':
                 continue
-            data: dict = dict(gameserver)
-            data['query'] = Query(gameserver.service_id, **data['query'])
-            data['settings'] = Settings.from_data(gameserver.service_id, **data['settings'])
-            data['game_specific'] = GameSpecific.from_data(gameserver.service_id, **data['game_specific'])
-            gameservers.append(ArkServer(gameserver, **data))
-        return gameservers
+            arkservers.append(ArkServer(gameserver))
+        return arkservers
 
     @classmethod
     def find_by_gamertag(cls, gamertag: str) -> ArkServer | None:
@@ -70,56 +63,59 @@ class ArkServer:
     def __init__(
             self,
             gameserver: GameServer,
-            query: Query = None,
-            settings: Settings = None,
-            game_specific: GameSpecific = None,
             **kwargs
     ):
-        self.query = query
-        self.settings = settings
-        self.game_specific = game_specific
         self.service_id = gameserver.service_id
-        self.username = gameserver.username
         self.status = gameserver.status
+        self.last_status_change = gameserver.last_status_change
+        self.location = gameserver.location
+        self.query = Query(service_id=gameserver.service_id, **dict(gameserver.query))
+        self.settings = Settings(service_id=gameserver.service_id, **Settings.keys_to_snakecase(gameserver.settings))
+        self.game_specific = GameSpecific(service_id=gameserver.service_id, **dict(gameserver.game_specific))
         self.__gameserver = gameserver
+
         for k, v in kwargs.items():
             self.__dict__[k] = v
 
     @property
+    def server_name(self):
+        return self.__query.server_name
+
+    @property
     def map(self) -> str:
         """The map name."""
-        return self.query.map
+        return self.__query.map
 
     @property
     def player_max(self) -> int:
         """Maximum players a server can have."""
-        return self.query.player_max
+        return self.__query.player_max
 
     @property
     def player_current(self) -> int:
         """Number of players in the server."""
-        return self.query.player_current
+        return self.__query.player_current
 
     @property
     def admin_password(self) -> str:
-        return self.settings.config.admin_password
+        return self.__settings.config.admin_password
 
     @property
     def server_password(self) -> str:
-        return self.settings.config.server_password
+        return self.__settings.config.server_password
 
     @property
     def spectator_password(self) -> str:
-        return self.settings.config.spectatorpassword
+        return self.__settings.config.spectatorpassword
 
     @property
     def current_admin_password(self) -> str:
-        return self.settings.config.current_admin_password
+        return self.__settings.config.current_admin_password
 
     def log_shooter_game(self) -> str:
         """The server's logs. Refreshes about every 15+/- minutes """
         path = f'/services/{self.service_id}/gameservers/file_server/download'
-        params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log"}
+        params = {'file': f"/games/{self.__gameserver.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame.log"}
         response = Client.get(path=path, params=params)
         data: dict = response.json()['data']
         url = data['token']['url']
@@ -130,7 +126,7 @@ class ArkServer:
     def log_shooter_game_last(self) -> str:
         """The previous server's logs. Refreshes about every 15+/- minutes """
         path = f'/services/{self.service_id}/gameservers/file_server/download'
-        params = {'file': f"/games/{self.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
+        params = {'file': f"/games/{self.__gameserver.username}/noftp/arkxb/ShooterGame/Saved/Logs/ShooterGame_Last.log"}
         response = Client.get(path=path, params=params)
         data: dict = response.json()['data']
         url = data['token']['url']
@@ -141,7 +137,7 @@ class ArkServer:
     def log_restart(self) -> str:
         """The server's system logs. Refreshes about every 15+/- minutes """
         path = f'/services/{self.service_id}/gameservers/file_server/download'
-        params = {'file': f"/games/{self.username}/ftproot/restart.log"}
+        params = {'file': f"/games/{self.__gameserver.username}/ftproot/restart.log"}
         response = Client.get(path=path, params=params)
         data: dict = response.json()['data']
         url = data['token']['url']
@@ -180,11 +176,9 @@ class ArkServer:
         return self.__gameserver.uninstall_game('arkxb')
 
     def __repr__(self):
+        server_name = f"server_name={repr(self.server_name)}"
         service_id = f"service_id={repr(self.service_id)}"
-        server_name = f"server_name={repr(self.settings.config.server_name)}"
-        player_current = f"player_current={repr(self.player_current)}"
-        status = f"status={repr(self.status)}"
-        params = ", ".join([service_id, server_name, player_current, status])
+        params = ", ".join([server_name, service_id])
         return f"<ArkSurvival({params}, ...)>"
 
 

@@ -2,7 +2,7 @@
 class GameFeatures:
     def __init__(
             self,
-            service_id: int,
+            service_id: int = None,
             has_backups: bool = False,
             has_world_backups: bool = False,
             has_rcon: bool = False,

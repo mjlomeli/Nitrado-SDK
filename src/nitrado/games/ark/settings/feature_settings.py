@@ -1,9 +1,15 @@
 
 
 class FeatureSettings:
+    @classmethod
+    def keys_to_snakecase(cls, data: dict) -> dict:
+        return {
+            'engine_settings': data['engine-settings']
+        }
+
     def __init__(
             self,
-            service_id: int,
+            service_id: int = None,
             engine_settings: str = None,
             **kwargs
     ):
