@@ -32,3 +32,4 @@ def assert_success(response: Response):
 
     if data['status'] != 'success':
         raise requests.RequestException(f"[Nitrado Error]: {data['message']} ({response.url})")
+

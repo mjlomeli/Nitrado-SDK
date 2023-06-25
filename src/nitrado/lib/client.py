@@ -10,6 +10,7 @@ load_dotenv()
 class Client:
     ENV_NAME = "NITRADO_API_KEY"
     NITRADO_API_URL = "https://api.nitrado.net"
+    ATTEMPTS = 5
 
     @classmethod
     def headers(cls) -> dict:
@@ -27,66 +28,78 @@ class Client:
 
     @classmethod
     def get_without_api_key(cls, path: str = None, params=None, **kwargs) -> Response:
-        try:
-            response = get(cls.make_path(path), params=params, **kwargs)
-            assert_success(response)
-            return response
-        except ConnectTimeout:
-            return cls.get_without_api_key(path=path, params=params, **kwargs)
-        except ConnectionError:
-            return cls.get_without_api_key(path=path, params=params, **kwargs)
+        attempts = 0
+        while attempts < cls.ATTEMPTS:
+            try:
+                response = get(cls.make_path(path), params=params, **kwargs)
+                assert_success(response)
+                return response
+            except Exception as e:
+                attempts += 1
+                if attempts >= cls.ATTEMPTS:
+                    raise e
 
     @classmethod
     def get(cls, path: str = None, params=None, **kwargs) -> Response:
-        try:
-            response = get(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
-            assert_success(response)
-            return response
-        except ConnectTimeout:
-            return cls.get(path=path, params=params, **kwargs)
-        except ConnectionError:
-            return cls.get(path=path, params=params, **kwargs)
+        attempts = 0
+        while attempts < cls.ATTEMPTS:
+            try:
+                response = get(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
+                assert_success(response)
+                return response
+            except Exception as e:
+                attempts += 1
+                if attempts >= cls.ATTEMPTS:
+                    raise e
 
     @classmethod
     def post_without_api_key(cls, path: str = None, params=None, **kwargs) -> Response:
-        try:
-            response = post(cls.make_path(path), params=params, **kwargs)
-            assert_success(response)
-            return response
-        except ConnectTimeout:
-            return cls.post_without_api_key(path=path, params=params, **kwargs)
-        except ConnectionError:
-            return cls.post_without_api_key(path=path, params=params, **kwargs)
+        attempts = 0
+        while attempts < cls.ATTEMPTS:
+            try:
+                response = post(cls.make_path(path), params=params, **kwargs)
+                assert_success(response)
+                return response
+            except Exception as e:
+                attempts += 1
+                if attempts >= cls.ATTEMPTS:
+                    raise e
 
     @classmethod
     def post(cls, path: str = None, params=None, **kwargs) -> Response:
-        try:
-            response = post(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
-            assert_success(response)
-            return response
-        except ConnectTimeout:
-            return cls.post(path=path, params=params, **kwargs)
-        except ConnectionError:
-            return cls.post(path=path, params=params, **kwargs)
+        attempts = 0
+        while attempts < cls.ATTEMPTS:
+            try:
+                response = post(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
+                assert_success(response)
+                return response
+            except Exception as e:
+                attempts += 1
+                if attempts >= cls.ATTEMPTS:
+                    raise e
 
     @classmethod
     def delete(cls, path: str = None, params=None, **kwargs) -> Response:
-        try:
-            response = delete(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
-            assert_success(response)
-            return response
-        except ConnectTimeout:
-            return cls.delete(path=path, params=params, **kwargs)
-        except ConnectionError:
-            return cls.delete(path=path, params=params, **kwargs)
+        attempts = 0
+        while attempts < cls.ATTEMPTS:
+            try:
+                response = delete(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
+                assert_success(response)
+                return response
+            except Exception as e:
+                attempts += 1
+                if attempts >= cls.ATTEMPTS:
+                    raise e
 
     @classmethod
     def put(cls, path: str = None, params=None, **kwargs) -> Response:
-        try:
-            response = put(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
-            assert_success(response)
-            return response
-        except ConnectTimeout:
-            return cls.put(path=path, params=params, **kwargs)
-        except ConnectionError:
-            return cls.put(path=path, params=params, **kwargs)
+        attempts = 0
+        while attempts < cls.ATTEMPTS:
+            try:
+                response = put(cls.make_path(path), headers=cls.headers(), params=params, **kwargs)
+                assert_success(response)
+                return response
+            except Exception as e:
+                attempts += 1
+                if attempts >= cls.ATTEMPTS:
+                    raise e

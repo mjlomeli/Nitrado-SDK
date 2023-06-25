@@ -40,6 +40,8 @@ class ArkServer:
         gameserver = GameServer.find_by_id(service_id)
         if gameserver.game != 'arkxb':
             raise Exception(f"Server ID {service_id} is not from Ark: Survival Evolved (Xbox)")
+        if gameserver.status != 'started':
+            raise Exception(f"Server ID {service_id} is {gameserver.status}.")
         data: dict = dict(gameserver)
         return ArkServer(**data)
 
@@ -48,7 +50,7 @@ class ArkServer:
         """Get all ArkServers."""
         arkservers = []
         for gameserver in GameServer.all():
-            if gameserver.game != 'arkxb':
+            if gameserver.game != 'arkxb' or gameserver.status != 'started':
                 continue
             arkservers.append(ArkServer(gameserver))
         return arkservers
@@ -112,6 +114,8 @@ class ArkServer:
         return self.settings.config.current_admin_password
 
     def has_player(self, gamertag: str) -> bool:
+        if self.status != 'started':
+            return False
         for player in self.players():
             if player.online and player.name.lower() == gamertag.lower():
                 return True
@@ -164,6 +168,8 @@ class ArkServer:
         return data['clusterid']
 
     def players(self) -> list[Players]:
+        if self.status != 'started':
+            return []
         return self.__gameserver.players()
 
     def start(self) -> bool:
